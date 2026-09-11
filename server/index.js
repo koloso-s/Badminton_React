@@ -789,87 +789,87 @@ app.get("/api/tournament/gettournament/:grupa", async (req, res) => {
       const mainOrder =
         tableName === "tabela_8x"
           ? [
-              "main1",
-              "main8",
-              "main5",
-              "main4",
-              "main3",
-              "main6",
-              "main7",
-              "main2",
-            ]
+            "main1",
+            "main8",
+            "main5",
+            "main4",
+            "main3",
+            "main6",
+            "main7",
+            "main2",
+          ]
           : tableName === "tabela_16x"
             ? [
-                "main1",
-                "main16",
-                "main9",
-                "main8",
-                "main5",
-                "main12",
-                "main13",
-                "main4",
-                "main3",
-                "main14",
-                "main11",
-                "main6",
-                "main7",
-                "main10",
-                "main15",
-                "main2",
-              ]
+              "main1",
+              "main16",
+              "main9",
+              "main8",
+              "main5",
+              "main12",
+              "main13",
+              "main4",
+              "main3",
+              "main14",
+              "main11",
+              "main6",
+              "main7",
+              "main10",
+              "main15",
+              "main2",
+            ]
             : tableName === "tabela_32x"
               ? [
-                  "main1",
-                  "main32",
-                  "main17",
-                  "main16",
-                  "main9",
-                  "main24",
-                  "main25",
-                  "main8",
-                  "main5",
-                  "main28",
-                  "main21",
-                  "main12",
-                  "main13",
-                  "main20",
-                  "main29",
-                  "main4",
-                  "main3",
-                  "main30",
-                  "main19",
-                  "main14",
-                  "main11",
-                  "main22",
-                  "main27",
-                  "main6",
-                  "main7",
-                  "main26",
-                  "main23",
-                  "main10",
-                  "main15",
-                  "main18",
-                  "main31",
-                  "main2",
-                ]
+                "main1",
+                "main32",
+                "main17",
+                "main16",
+                "main9",
+                "main24",
+                "main25",
+                "main8",
+                "main5",
+                "main28",
+                "main21",
+                "main12",
+                "main13",
+                "main20",
+                "main29",
+                "main4",
+                "main3",
+                "main30",
+                "main19",
+                "main14",
+                "main11",
+                "main22",
+                "main27",
+                "main6",
+                "main7",
+                "main26",
+                "main23",
+                "main10",
+                "main15",
+                "main18",
+                "main31",
+                "main2",
+              ]
               : [
-                  "main17",
-                  "main16",
-                  "main9",
-                  "main24",
-                  "main21",
-                  "main12",
-                  "main13",
-                  "main20",
-                  "main19",
-                  "main14",
-                  "main11",
-                  "main22",
-                  "main23",
-                  "main10",
-                  "main15",
-                  "main18",
-                ];
+                "main17",
+                "main16",
+                "main9",
+                "main24",
+                "main21",
+                "main12",
+                "main13",
+                "main20",
+                "main19",
+                "main14",
+                "main11",
+                "main22",
+                "main23",
+                "main10",
+                "main15",
+                "main18",
+              ];
       const main = mainOrder.map((key) => ({
         fname: row[`${key}_fname`] || "",
         lname: row[`${key}_lname`] || "",
@@ -1218,17 +1218,17 @@ app.get("/api/tournament/gettournament/:grupa", async (req, res) => {
       return {
         ...(tableName === "tabela_32x"
           ? {
-              ...setTable_32xContent(),
-              ...setTable_24xContent(),
-              ...setTable_16xContent(),
-            }
+            ...setTable_32xContent(),
+            ...setTable_24xContent(),
+            ...setTable_16xContent(),
+          }
           : {}),
         ...(tableName === "tabela_24x"
           ? {
-              ...setTable_24x_tempContent(),
-              ...setTable_24xContent(),
-              ...setTable_16xContent(),
-            }
+            ...setTable_24x_tempContent(),
+            ...setTable_24xContent(),
+            ...setTable_16xContent(),
+          }
           : {}),
         ...(tableName === "tabela_16x" ? { ...setTable_16xContent() } : {}),
         main,
@@ -2098,88 +2098,242 @@ app.post("/api/matches/walkover", async (req, res) => {
 app.get("/api/results/:group", async (req, res) => {
   const { group } = req.params;
 
+  // Sprawdzenie poprawności grupy
+  if (group !== "podstawowa" && group !== "zaawansowana") {
+    return res.status(400).json({
+      error: "Nieprawidłowa grupa",
+    });
+  }
+
   try {
-    const [dateRows] = await db.query(
+    // Pobieramy wszystkie turnieje dla danej grupy
+    // DATE_FORMAT gwarantuje, że data przyjdzie jako zwykły tekst YYYY-MM-DD
+    const [tournaments] = await db.query(
       `
-      SELECT DISTINCT DATE_FORMAT(data, '%Y-%m-%d') as date
+      SELECT
+        DATE_FORMAT(data, '%Y-%m-%d') AS date,
+        tabela
       FROM turniej_tabele
       WHERE grupa = ?
-      ORDER BY data
-    `,
-      [group],
+      ORDER BY data ASC
+      `,
+      [group]
     );
 
     const results = {};
 
-    for (const row of dateRows) {
-      const date = row.date;
+    for (const tournament of tournaments) {
+      const date = String(tournament.date);
+      const table = tournament.tabela;
 
-      const [tables] = await db.query(
-        `
-        SELECT tabela
-        FROM turniej_tabele
-        WHERE data = ? AND grupa = ?
-        LIMIT 1
-      `,
-        [date, group],
-      );
+      let maxPositions;
 
-      if (!tables.length) continue;
-
-      const table = tables[0].tabela;
-
-      let columns = "";
-
+      // Ustalamy liczbę miejsc na podstawie tabeli
       switch (table) {
         case "tabela_8x":
-          columns = "`1`,`2`,`3`,`4`,`5`,`6`,`7`,`8`";
+          maxPositions = 8;
           break;
 
         case "tabela_16x":
-          columns =
-            "`1`,`2`,`3`,`4`,`5`,`6`,`7`,`8`,`9`,`10`,`11`,`12`,`13`,`14`,`15`,`16`";
+          maxPositions = 16;
           break;
 
         case "tabela_24x":
-          columns =
-            "`1`,`2`,`3`,`4`,`5`,`6`,`7`,`8`,`9`,`10`,`11`,`12`,`13`,`14`,`15`,`16`,`17`,`18`,`19`,`20`,`21`,`22`,`23`,`24`";
+          maxPositions = 24;
           break;
 
         case "tabela_32x":
-          columns =
-            "`1`,`2`,`3`,`4`,`5`,`6`,`7`,`8`,`9`,`10`,`11`,`12`,`13`,`14`,`15`,`16`,`17`,`18`,`19`,`20`,`21`,`22`,`23`,`24`,`25`,`26`,`27`,`28`,`29`,`30`,`31`,`32`";
+          maxPositions = 32;
           break;
 
         default:
+          console.warn(
+            `Nieznana tabela "${table}" dla grupy "${group}" i daty "${date}"`
+          );
           continue;
       }
 
+      // Tworzymy listę kolumn:
+      // `1`,`2`,`3`... itd.
+      const columns = Array.from(
+        { length: maxPositions },
+        (_, index) => `\`${index + 1}\``
+      ).join(",");
+
+      // Pobieramy konkretną tabelę wyników
       const query = `
         SELECT ${columns}
         FROM ${table}
-        WHERE grupa = ? AND data = ?
+        WHERE grupa = ?
+          AND DATE(data) = ?
+        LIMIT 1
       `;
 
-      const [tableRows] = await db.query(query, [group, date]);
+      const [rows] = await db.query(query, [group, date]);
 
-      const rowData = tableRows[0];
+      if (!rows.length) {
+        console.warn(
+          `Brak wyników w ${table} dla grupy "${group}" i daty "${date}"`
+        );
+        continue;
+      }
 
-      const result = columns.split(",").map((col, index) => {
-        const key = col.replace(/`/g, "").trim();
+      const row = rows[0];
 
-        return {
-          id: rowData[key],
-          miejsce: index + 1,
-        };
-      });
+      // Tworzymy wyniki:
+      // [
+      //   { id: 117, miejsce: 1 },
+      //   { id: 110, miejsce: 2 },
+      //   ...
+      // ]
+      results[date] = Array.from(
+        { length: maxPositions },
+        (_, index) => {
+          const miejsce = index + 1;
 
-      results[date] = result;
+          return {
+            id: row[miejsce],
+            miejsce: miejsce,
+          };
+        }
+      );
     }
 
+    console.log(
+      `Wyniki grupy "${group}":`,
+      Object.keys(results)
+    );
+
     res.json(results);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Błąd serwera");
+  } catch (error) {
+    console.error(
+      `Błąd /api/results/${group}:`,
+      error
+    );
+
+    res.status(500).json({
+      error: "Błąd serwera podczas pobierania wyników",
+    });
+  }
+}); app.get("/api/results/:group", async (req, res) => {
+  const { group } = req.params;
+
+  // Sprawdzenie poprawności grupy
+  if (group !== "podstawowa" && group !== "zaawansowana") {
+    return res.status(400).json({
+      error: "Nieprawidłowa grupa",
+    });
+  }
+
+  try {
+    // Pobieramy wszystkie turnieje dla danej grupy
+    // DATE_FORMAT gwarantuje, że data przyjdzie jako zwykły tekst YYYY-MM-DD
+    const [tournaments] = await db.query(
+      `
+      SELECT
+        DATE_FORMAT(data, '%Y-%m-%d') AS date,
+        tabela
+      FROM turniej_tabele
+      WHERE grupa = ?
+      ORDER BY data ASC
+      `,
+      [group]
+    );
+
+    const results = {};
+
+    for (const tournament of tournaments) {
+      const date = String(tournament.date);
+      const table = tournament.tabela;
+
+      let maxPositions;
+
+      // Ustalamy liczbę miejsc na podstawie tabeli
+      switch (table) {
+        case "tabela_8x":
+          maxPositions = 8;
+          break;
+
+        case "tabela_16x":
+          maxPositions = 16;
+          break;
+
+        case "tabela_24x":
+          maxPositions = 24;
+          break;
+
+        case "tabela_32x":
+          maxPositions = 32;
+          break;
+
+        default:
+          console.warn(
+            `Nieznana tabela "${table}" dla grupy "${group}" i daty "${date}"`
+          );
+          continue;
+      }
+
+      // Tworzymy listę kolumn:
+      // `1`,`2`,`3`... itd.
+      const columns = Array.from(
+        { length: maxPositions },
+        (_, index) => `\`${index + 1}\``
+      ).join(",");
+
+      // Pobieramy konkretną tabelę wyników
+      const query = `
+        SELECT ${columns}
+        FROM ${table}
+        WHERE grupa = ?
+          AND DATE(data) = ?
+        LIMIT 1
+      `;
+
+      const [rows] = await db.query(query, [group, date]);
+
+      if (!rows.length) {
+        console.warn(
+          `Brak wyników w ${table} dla grupy "${group}" i daty "${date}"`
+        );
+        continue;
+      }
+
+      const row = rows[0];
+
+      // Tworzymy wyniki:
+      // [
+      //   { id: 117, miejsce: 1 },
+      //   { id: 110, miejsce: 2 },
+      //   ...
+      // ]
+      results[date] = Array.from(
+        { length: maxPositions },
+        (_, index) => {
+          const miejsce = index + 1;
+
+          return {
+            id: row[miejsce],
+            miejsce: miejsce,
+          };
+        }
+      );
+    }
+
+    console.log(
+      `Wyniki grupy "${group}":`,
+      Object.keys(results)
+    );
+
+    res.json(results);
+  } catch (error) {
+    console.error(
+      `Błąd /api/results/${group}:`,
+      error
+    );
+
+    res.status(500).json({
+      error: "Błąd serwera podczas pobierania wyników",
+    });
   }
 });
 // sprawdzenie czy turniej się rozpoczął

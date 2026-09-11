@@ -1,158 +1,210 @@
 .groups-page {
     width: 100%;
-    background-color: #f5f5f5;
-    margin-top: 30px;
-    padding: 20px;
+    min-height: 100%;
+    padding: 30px;
+    box-sizing: border-box;
+    background: #fff;
+    color: #222;
 }
 
-.groups-container {
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
+.groups-page .groups-container {
+    width: 100%;
+    max-width: 900px;
     min-height: 700px;
+    margin: 0 auto;
 }
 
-.header {
+.groups-page .header,
+.groups-page .groups-header {
+    margin-bottom: 25px;
     text-align: center;
-    margin-bottom: 30px;
 }
 
-.groups-header {
-    text-align: center;
-    margin-bottom: 30px;
+.groups-page .header h1,
+.groups-page .groups-header h1 {
+    margin: 0;
+    font-size: 32px;
+    color: #222;
 }
 
-.date-selector {
+.groups-page .date-selector {
     margin-bottom: 20px;
     text-align: center;
 }
 
-.date-selector input {
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+.groups-page .date-selector input,
+.groups-page .player-input {
+    padding: 11px 12px;
+    border: 1px solid #d8d8d8;
+    border-radius: 8px;
+    background: white;
+    color: #222;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.add-player-section {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 30px;
+.groups-page .date-selector input:focus,
+.groups-page .player-input:focus {
+    border-color: #777;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+}
+
+.groups-page .add-player-section {
+    position: relative;
     display: flex;
-    gap: 15px;
     justify-content: center;
     align-items: flex-start;
-    /* Aligns items to top so suggestions don't push button weirdly */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    position: relative;
-    /* Context for absolute positioning of suggestions if needed, though simpler valid flow is fine */
+    gap: 12px;
+    margin-bottom: 25px;
+    padding: 20px;
+    background: #f7f7f7;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 }
 
-.input-group {
+.groups-page .input-group {
+    position: relative;
     display: flex;
-    gap: 10px;
-    position: relative;
     flex-direction: row;
+    gap: 10px;
 }
 
-.player-input {
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+.groups-page .player-input {
     width: 200px;
 }
 
-.suggestions-list {
+.groups-page .suggestions-list {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 6px);
     left: 0;
-    right: 0;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 0 0 5px 5px;
-    list-style: none;
-    padding: 0;
-    margin: 5px 0 0 0;
-    max-height: 200px;
-    overflow-y: auto;
     z-index: 1000;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 100%;
-    /* Spans matching the input-group width via flex or specific setting */
     min-width: 410px;
-    /* approximates 2 inputs + gap */
+    max-height: 220px;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    list-style: none;
+    background: white;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
 }
 
-.suggestions-list li {
-    padding: 10px;
+.groups-page .suggestions-list li {
+    padding: 11px 13px;
     cursor: pointer;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #eeeeee;
+    transition: background 0.2s ease;
 }
 
-.suggestions-list li:hover {
-    background-color: #f0f0f0;
+.groups-page .suggestions-list li:last-child {
+    border-bottom: none;
 }
 
-.add-player-btn {
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
+.groups-page .suggestions-list li:hover {
+    background: #f7f7f7;
+}
+
+.groups-page .add-player-btn {
+    min-height: 42px;
+    padding: 11px 20px;
     border: none;
-    border-radius: 5px;
-    font-size: 16px;
+    border-radius: 8px;
+    background: #222;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s;
-    height: 42px;
-    /* Match input height roughly */
+    transition: background 0.2s ease, transform 0.2s ease;
 }
 
-.add-player-btn:hover {
-    background-color: #45a049;
+.groups-page .add-player-btn:hover:not(:disabled) {
+    background: #333;
 }
 
-.add-player-btn:disabled {
-    background-color: #cccccc;
+.groups-page .add-player-btn:active:not(:disabled) {
+    transform: translateY(1px);
+}
+
+.groups-page .add-player-btn:disabled {
+    background: #cfcfcf;
+    color: #777;
     cursor: not-allowed;
 }
 
-.players-list {
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.groups-page .players-list {
     overflow: hidden;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-.players-table {
+.groups-page .players-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.players-table th,
-.players-table td {
-    padding: 12px 15px;
+.groups-page .players-table thead {
+    background: #222;
+    color: white;
+}
+
+.groups-page .players-table th,
+.groups-page .players-table td {
+    padding: 13px 18px;
     text-align: left;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #e8e8e8;
 }
 
-.players-table th {
-    background-color: #f2f2f2;
-    font-weight: bold;
+.groups-page .players-table th {
+    font-size: 14px;
+    font-weight: 600;
 }
 
-.players-table tr:last-child td {
+.groups-page .players-table tbody tr:hover {
+    background: #f7f7f7;
+}
+
+.groups-page .players-table tr:last-child td {
     border-bottom: none;
 }
 
-.back-link {
-    display: block;
+.groups-page .back-link {
+    display: inline-block;
     margin-top: 20px;
-    text-align: center;
-    color: #666;
+    color: #555;
     text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
 }
 
-.back-link:hover {
-    text-decoration: underline;
+.groups-page .back-link:hover {
+    color: #222;
+}
+
+@media (max-width: 700px) {
+    .groups-page {
+        padding: 20px 10px;
+    }
+
+    .groups-page .header h1,
+    .groups-page .groups-header h1 {
+        font-size: 26px;
+    }
+
+    .groups-page .add-player-section,
+    .groups-page .input-group {
+        flex-direction: column;
+    }
+
+    .groups-page .player-input,
+    .groups-page .add-player-btn {
+        width: 100%;
+    }
+
+    .groups-page .suggestions-list {
+        min-width: 100%;
+    }
 }

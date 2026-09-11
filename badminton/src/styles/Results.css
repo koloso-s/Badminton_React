@@ -1,0 +1,211 @@
+.results {
+    width: 100%;
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+.tournament-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.tournament-header h1 {
+    margin: 0;
+    font-size: 32px;
+    text-transform: capitalize;
+}
+
+.tournament-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.tournament-buttons button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #e5e5e5;
+    color: #333;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.tournament-buttons button:hover {
+    background: #d5d5d5;
+}
+
+.tournament-buttons button.active {
+    background: #222;
+    color: white;
+}
+
+/* TABELA */
+
+.results-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: max-content;
+}
+
+/* NAGŁÓWEK */
+
+.results-table thead {
+    background: #222;
+    color: white;
+}
+
+.results-table th {
+    padding: 14px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    border-right: 1px solid #444;
+}
+
+.results-table th:last-child {
+    border-right: none;
+}
+
+.player-column {
+    min-width: 120px;
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: #222;
+}
+
+.date-column {
+    min-width: 110px;
+    text-align: center;
+}
+
+/* WIERSZE */
+
+.results-table td {
+    padding: 13px 18px;
+    border-bottom: 1px solid #e8e8e8;
+    border-right: 1px solid #eeeeee;
+}
+
+.results-table tbody tr:hover {
+    background: #f7f7f7;
+}
+
+.results-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ZAWODNIK */
+
+.player-name {
+    position: sticky;
+    left: 0;
+    background: white;
+    font-weight: 700;
+    text-align: center;
+    border-right: 2px solid #ddd !important;
+    z-index: 1;
+}
+
+/* MIEJSCE */
+
+.place {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    min-width: 110px;
+}
+
+/* BRAK WYNIKÓW */
+
+.no-results {
+    text-align: center;
+    padding: 40px !important;
+    color: #888;
+}
+
+/* RESPONSYWNOŚĆ */
+
+@media (max-width: 700px) {
+    .results {
+        padding: 20px 10px;
+    }
+
+    .tournament-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 20px;
+    }
+
+    .tournament-header h1 {
+        font-size: 26px;
+    }
+
+    .tournament-buttons {
+        width: 100%;
+    }
+
+    .tournament-buttons button {
+        flex: 1;
+        padding: 10px;
+        font-size: 13px;
+    }
+}
+
+.group-change {
+    cursor: help;
+    font-size: 14px;
+}
+
+.halved-points {
+    cursor: help;
+    font-weight: bold;
+    margin-left: 2px;
+}
+
+.results-legend {
+    margin-top: 15px;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.player-changed-group td {
+    background: rgba(255, 193, 7, 0.12);
+}
+
+.player-changed-group td:first-child {
+    border-left: 4px solid #ffc107;
+}
+
+.group-change {
+    cursor: help;
+    margin-left: 4px;
+}
+
+.halved-points {
+    cursor: help;
+    font-weight: bold;
+    margin-left: 2px;
+}
+
+.results-legend {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 14px;
+}

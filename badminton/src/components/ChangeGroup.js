@@ -1,9 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import "../styles/ChangeGroup.css";
 
 const ChangeGroup = () => {
   const [primaryGroup, setPrimaryGroup] = useState([]);
   const [advancedGroup, setAdvancedGroup] = useState([]);
+
+  // ==========================================
+  // POBIERANIE GRUP
+  // ==========================================
 
   const fetchGroups = async () => {
     try {
@@ -18,13 +23,17 @@ const ChangeGroup = () => {
       setPrimaryGroup(primaryData);
       setAdvancedGroup(advancedData);
     } catch (error) {
-      console.error(error);
+      console.error("Błąd podczas pobierania grup:", error);
     }
   };
 
   useEffect(() => {
     fetchGroups();
   }, []);
+
+  // ==========================================
+  // ZMIANA GRUPY
+  // ==========================================
 
   const handleDoubleClick = async (player, currentGroup) => {
     if (player.group_change_date) {
@@ -33,7 +42,9 @@ const ChangeGroup = () => {
     }
 
     const newGroup =
-      currentGroup === "podstawowa" ? "zaawansowana" : "podstawowa";
+      currentGroup === "podstawowa"
+        ? "zaawansowana"
+        : "podstawowa";
 
     try {
       const response = await fetch(
@@ -46,7 +57,7 @@ const ChangeGroup = () => {
           body: JSON.stringify({
             newGroup,
           }),
-        },
+        }
       );
 
       const data = await response.json();
@@ -58,122 +69,157 @@ const ChangeGroup = () => {
 
       fetchGroups();
     } catch (error) {
-      console.error(error);
+      console.error("Błąd podczas zmiany grupy:", error);
     }
   };
 
-  const playerStyle = (player) => ({
-    padding: "12px 15px",
-    marginBottom: "10px",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
-    cursor: "pointer",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: player.group_change_date ? "#ffd6d6" : "#d9f7d9",
-    transition: "0.2s",
-    fontSize: "16px",
-  });
+  // ==========================================
+  // RENDER ZAWODNIKA
+  // ==========================================
+
+  const renderPlayer = (player, currentGroup) => {
+    const changed = Boolean(player.group_change_date);
+
+    return (
+      <div
+        key={player.id}
+        className={`change-group-player ${changed
+          ? "change-group-player--changed"
+          : "change-group-player--available"
+          }`}
+        onDoubleClick={() =>
+          handleDoubleClick(player, currentGroup)
+        }
+        title={
+          changed
+            ? "Ten zawodnik już zmienił grupę"
+            : "Kliknij dwukrotnie, aby zmienić grupę"
+        }
+      >
+        <span className="change-group-player-name">
+          {player.fname} {player.lname}
+        </span>
+
+        <span
+          className={`change-group-status ${changed
+            ? "change-group-status--blocked"
+            : "change-group-status--available"
+            }`}
+        >
+          {changed ? "❌" : "✅"}
+        </span>
+      </div>
+    );
+  };
+
+  // ==========================================
+  // RENDER
+  // ==========================================
 
   return (
-    <div
-      style={{
-        width: "90%",
-        maxWidth: "1000px",
-        margin: "30px auto",
-      }}
-    >
-      <Link
-        to="/"
-        style={{
-          textDecoration: "none",
-          color: "#333",
-          display: "inline-block",
-          marginBottom: "20px",
-        }}
-      >
-        ← Powrót do strony głównej
-      </Link>
+    <div className="change-group-page">
 
-      <h2 style={{ textAlign: "center" }}>Zmiana grupy zawodników</h2>
+      <div className="change-group-header">
 
-      <p style={{ textAlign: "center", color: "#666" }}>
-        Kliknij dwukrotnie zawodnika, aby przenieść go do drugiej grupy.
-      </p>
-
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "30px",
-          marginTop: "30px",
-        }}
-      >
-        <div
-          style={{
-            background: "#f7f7f7",
-            padding: "20px",
-            borderRadius: "12px",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          }}
+        <Link
+          to="/"
+          className="change-group-back"
         >
-          <h3
-            style={{
-              textAlign: "center",
-              color: "#1976d2",
-            }}
-          >
-            Grupa podstawowa
-          </h3>
+          ← Powrót do strony głównej
+        </Link>
 
-          {primaryGroup.map((player) => (
-            <div
-              key={player.id}
-              style={playerStyle(player)}
-              onDoubleClick={() => handleDoubleClick(player, "podstawowa")}
-            >
-              <span>
-                {player.fname} {player.lname}
-              </span>
+        <h1>Zmiana grupy zawodników</h1>
 
-              <span>{player.group_change_date ? "❌" : "✅"}</span>
-            </div>
-          ))}
-        </div>
+        <p>
+          Kliknij dwukrotnie zawodnika, aby przenieść go do drugiej grupy.
+        </p>
 
-        <div
-          style={{
-            background: "#f7f7f7",
-            padding: "20px",
-            borderRadius: "12px",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          }}
-        >
-          <h3
-            style={{
-              textAlign: "center",
-              color: "#d32f2f",
-            }}
-          >
-            Grupa zaawansowana
-          </h3>
-
-          {advancedGroup.map((player) => (
-            <div
-              key={player.id}
-              style={playerStyle(player)}
-              onDoubleClick={() => handleDoubleClick(player, "zaawansowana")}
-            >
-              <span>
-                {player.fname} {player.lname}
-              </span>
-
-              <span>{player.group_change_date ? "❌" : "✅"}</span>
-            </div>
-          ))}
-        </div>
       </div>
+
+      <div className="change-group-grid">
+
+        {/* ================================
+            GRUPA PODSTAWOWA
+        ================================ */}
+
+        <section className="change-group-card">
+
+          <div className="change-group-card-header">
+            <h2>Grupa podstawowa</h2>
+
+            <span className="change-group-count">
+              {primaryGroup.length}
+            </span>
+          </div>
+
+          <div className="change-group-list">
+
+            {primaryGroup.length > 0 ? (
+              primaryGroup.map((player) =>
+                renderPlayer(
+                  player,
+                  "podstawowa"
+                )
+              )
+            ) : (
+              <div className="change-group-empty">
+                Brak zawodników
+              </div>
+            )}
+
+          </div>
+
+        </section>
+
+        {/* ================================
+            GRUPA ZAAWANSOWANA
+        ================================ */}
+
+        <section className="change-group-card">
+
+          <div className="change-group-card-header">
+            <h2>Grupa zaawansowana</h2>
+
+            <span className="change-group-count">
+              {advancedGroup.length}
+            </span>
+          </div>
+
+          <div className="change-group-list">
+
+            {advancedGroup.length > 0 ? (
+              advancedGroup.map((player) =>
+                renderPlayer(
+                  player,
+                  "zaawansowana"
+                )
+              )
+            ) : (
+              <div className="change-group-empty">
+                Brak zawodników
+              </div>
+            )}
+
+          </div>
+
+        </section>
+
+      </div>
+
+      <div className="change-group-legend">
+
+        <div>
+          <span>✅</span>
+          Zawodnik może zmienić grupę
+        </div>
+
+        <div>
+          <span>❌</span>
+          Zawodnik wykorzystał już zmianę grupy
+        </div>
+
+      </div>
+
     </div>
   );
 };

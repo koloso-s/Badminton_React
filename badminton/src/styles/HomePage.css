@@ -1,58 +1,72 @@
-/* Global reset should optimally be in index.css */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 .home-page {
     display: flex;
+    flex: 1;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 50px;
+    gap: 35px;
     width: 100%;
-    padding: 20px;
-    flex: 1;
+    min-height: 100%;
+    padding: 30px;
+    box-sizing: border-box;
+    color: #222;
 }
 
 .home-page h1 {
-    font-size: 3rem;
-    margin-bottom: 20px;
-    color: #333;
+    margin: 0;
+    font-size: 32px;
+    color: #222;
     text-align: center;
 }
-.disabled-link {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-.home-page-buttons {
+
+.home-page .home-page-buttons {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 30px;
+    gap: 14px;
     width: 100%;
-    max-width: 800px;
+    max-width: 520px;
 }
 
-.home-page-buttons a {
-    padding: 25px 40px;
-    background-color: #4CAF50;
-    color: white;
+.home-page .home-page-buttons a {
+    width: 100%;
+    padding: 16px 22px;
+    box-sizing: border-box;
+    border-radius: 8px;
+    background: #e5e5e5;
+    color: #333;
     text-decoration: none;
-    border-radius: 50px;
-    font-size: 28px;
-    font-weight: bold;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease, background-color 0.3s ease, box-shadow 0.2s ease;
     text-align: center;
-    width: 100%;
-    max-width: 450px;
+    font-size: 18px;
+    font-weight: 600;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.home-page-buttons a:hover {
-    background-color: #45a049;
-    transform: translateY(-5px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+.home-page .home-page-buttons a:hover {
+    background: #222;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.10);
+}
+
+.home-page .disabled-link {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+@media (max-width: 700px) {
+    .home-page {
+        padding: 20px 15px;
+    }
+
+    .home-page h1 {
+        font-size: 26px;
+    }
+
+    .home-page .home-page-buttons a {
+        padding: 14px 18px;
+        font-size: 16px;
+    }
 }

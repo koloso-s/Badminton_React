@@ -44,7 +44,15 @@ const HomePage = () => {
           {loading ? "Sprawdzanie..." : "Rozpocznij Turniej"}
         </Link>
 
-        <Link to="/tournament">Przejdź do Turnieju</Link>
+        <Link to={!tournamentStarted ? "#" : "/tournament"}
+          onClick={(e) => {
+            if (!tournamentStarted) {
+              e.preventDefault();
+              alert("Turniej nie został jeszcze rozpoczęty.");
+            }
+          }}
+          className={!tournamentStarted ? "disabled-link" : ""}
+        >Przejdź do Turnieju</Link>
 
         <Link to="/changegroup">Zmień Grupę</Link>
       </div>
