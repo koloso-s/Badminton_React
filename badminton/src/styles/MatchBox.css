@@ -17,16 +17,21 @@
     width: 100%;
     margin: 0;
     padding: 10px 8px;
-    box-sizing: border-box;
     text-align: center;
     font-size: 13px;
     font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .match-box p:first-child {
     border-bottom: 1px solid #e8e8e8;
+    height: 45%;
 }
 
 .match-box p:last-child {
-    background: #f7f7f7;
+    background: #f7f7f77b;
+    height: 45%;
 }

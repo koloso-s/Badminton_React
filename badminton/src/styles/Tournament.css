@@ -67,6 +67,12 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
 }
 
+.tournament .tournament-buttons button.btn-select {
+    background: #222;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+}
+
 .tournament .tournament-buttons button:active,
 .tournament .modal-buttons button:active,
 .tournament .Button-courts>button:active {

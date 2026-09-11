@@ -20,7 +20,8 @@ function App() {
           <Route path="*" element={<ErrorPage />} />
           <Route path="/starttournament" element={<StartTournament />} />
           <Route path="/group/:group" element={<Groups />} />
-          <Route path="/tournament" element={<Tournament />} />
+          <Route path="/tournament" element={<Tournament show={false} />} />
+          <Route path="/tournament/show" element={<Tournament show={true} />} />
           <Route path="/showresults" element={<Results />} />
           <Route path="/changegroup" element={<ChangeGroup />} />
           <Route

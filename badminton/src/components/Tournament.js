@@ -6,7 +6,99 @@ import { Link } from "react-router-dom";
 import MatchModal from "./MatchesOperation";
 import { GoMatch } from "./MatchesOperation";
 
-const Tournament = () => {
+const Tournament = ({ show }) => {
+  useEffect(() => {
+    if (!show) return;
+
+    let animationFrame;
+    let timeout;
+
+    const startScrolling = () => {
+      const startPosition = window.scrollY;
+
+      const bottomPosition =
+        document.documentElement.scrollHeight -
+        window.innerHeight;
+
+      const speed = 45;
+
+      const distance =
+        bottomPosition - startPosition;
+
+      const duration =
+        distance > 0
+          ? (distance / speed) * 1000
+          : 0;
+
+      const startTime = performance.now();
+
+      const animateScroll = (currentTime) => {
+        const elapsed =
+          currentTime - startTime;
+
+        const progress =
+          duration > 0
+            ? Math.min(
+              elapsed / duration,
+              1
+            )
+            : 1;
+
+        const position =
+          startPosition +
+          distance * progress;
+
+        window.scrollTo({
+          top: position,
+          behavior: "auto",
+        });
+
+        if (progress < 1) {
+          animationFrame =
+            requestAnimationFrame(
+              animateScroll
+            );
+        } else {
+          timeout = setTimeout(() => {
+            setGroup((prevGroup) =>
+              prevGroup === "podstawowa"
+                ? "zaawansowana"
+                : "podstawowa"
+            );
+            timeout = setTimeout(() => {
+              window.scrollTo({
+                top: 0,
+                behavior: "auto",
+              });
+
+              timeout = setTimeout(() => {
+                startScrolling();
+              }, 2000);
+            }, 1000);
+          }, 3000);
+        }
+      };
+
+      animationFrame =
+        requestAnimationFrame(
+          animateScroll
+        );
+    };
+
+    window.scrollTo({
+      top: 0,
+      behavior: "auto",
+    });
+
+    timeout = setTimeout(() => {
+      startScrolling();
+    }, 2000);
+
+    return () => {
+      cancelAnimationFrame(animationFrame);
+      clearTimeout(timeout);
+    };
+  }, [show]);
   const [tournament, setTournament] = useState({});
   const [group, setGroup] = useState("podstawowa");
   const [columns, setColumns] = useState([]);
@@ -477,10 +569,10 @@ const Tournament = () => {
       <div className="tournament-header">
         <h1>Grupa {group}</h1>
         <div style={{ marginBottom: "1rem" }} className="tournament-buttons">
-          <button onClick={() => setGroup("podstawowa")}>
+          <button onClick={() => setGroup("podstawowa")} className={group === "podstawowa" ? "btn-select" : ""}>
             Grupa Podstawowa
           </button>
-          <button onClick={() => setGroup("zaawansowana")}>
+          <button onClick={() => setGroup("zaawansowana")} className={group === "zaawansowana" ? "btn-select" : ""}>
             Grupa Zaawansowana
           </button>
         </div>
@@ -526,9 +618,9 @@ const Tournament = () => {
           ))}
         </div>
       )}
-      <Link to="/" className="back-link" style={{ margin: "1.4rem" }}>
+      {!show && <Link to="/" className="back-link" style={{ margin: "1.4rem" }}>
         ← Powrót do strony głównej
-      </Link>
+      </Link>}
       {selectedMatch && (
         <MatchModal
           match={selectedMatch}
