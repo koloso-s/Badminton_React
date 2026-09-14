@@ -1,84 +1,69 @@
 .change-group-page {
     width: 100%;
-    padding: 30px;
-    box-sizing: border-box;
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
+    padding: 24px;
+    box-sizing: border-box;
 }
 
-/* ==========================================
-   NAGŁÓWEK
-========================================== */
-
 .change-group-header {
-    margin-bottom: 30px;
+    margin-bottom: 24px;
+    text-align: center;
 }
 
 .change-group-header h1 {
     margin: 0;
-    font-size: 32px;
+    font-size: 28px;
     color: #222;
-    text-align: center;
 }
 
 .change-group-header p {
-    margin-top: 10px;
+    margin-top: 8px;
     color: #777;
-    font-size: 15px;
-    text-align: center;
+    font-size: 14px;
 }
 
 .change-group-back {
     display: inline-block;
-    margin-bottom: 20px;
-    padding: 10px 16px;
-    border-radius: 8px;
-    background: #e5e5e5;
-    color: #333;
+    margin-top: 5px;
+    color: #555;
     text-decoration: none;
-    font-size: 14px;
     font-weight: 600;
-    transition: 0.2s ease;
+    transition: color 0.2s ease;
+    margin: 20px;
 }
 
 .change-group-back:hover {
-    background: #d5d5d5;
+    color: #222;
 }
-
-/* ==========================================
-   GRID GRUP
-========================================== */
 
 .change-group-grid {
+    width: 90%;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 25px;
+    gap: 20px;
 }
-
-/* ==========================================
-   KARTA GRUPY
-========================================== */
 
 .change-group-card {
     background: white;
-    border-radius: 12px;
+    border: 1px solid #e8e8e8;
+    border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 .change-group-card-header {
-    background: #222;
-    color: white;
-    padding: 16px 20px;
-
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 14px 16px;
+    background: #222;
+    color: white;
 }
 
 .change-group-card-header h2 {
     margin: 0;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
 }
 
@@ -86,51 +71,33 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
-    min-width: 32px;
-    height: 32px;
-
-    padding: 0 10px;
-
+    min-width: 28px;
+    height: 28px;
+    padding: 0 8px;
+    border-radius: 7px;
     background: #444;
-    border-radius: 8px;
-
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
 }
 
-/* ==========================================
-   LISTA ZAWODNIKÓW
-========================================== */
-
 .change-group-list {
-    padding: 15px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 7px;
+    padding: 12px;
 }
 
-/* ==========================================
-   ZAWODNIK
-========================================== */
-
 .change-group-player {
-    width: 100%;
-    padding: 13px 15px;
-
+    width: 92%;
+    padding: 11px 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     border: 1px solid #e5e5e5;
-    border-radius: 8px;
-
+    border-radius: 7px;
     background: white;
-
-    font-size: 15px;
-
+    font-size: 14px;
     cursor: pointer;
-
     transition:
         background 0.2s ease,
         border-color 0.2s ease,
@@ -141,17 +108,13 @@
 .change-group-player:hover {
     background: #f7f7f7;
     transform: translateY(-1px);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
 }
 
 .change-group-player-name {
     font-weight: 600;
     color: #333;
 }
-
-/* ==========================================
-   MOŻE ZMIENIĆ GRUPĘ
-========================================== */
 
 .change-group-player--available {
     border-left: 4px solid #4caf50;
@@ -160,10 +123,6 @@
 .change-group-player--available:hover {
     border-color: #4caf50;
 }
-
-/* ==========================================
-   JUŻ ZMIENIŁ GRUPĘ
-========================================== */
 
 .change-group-player--changed {
     border-left: 4px solid #d9534f;
@@ -183,92 +142,75 @@
     box-shadow: none;
 }
 
-/* ==========================================
-   STATUS
-========================================== */
-
 .change-group-status {
-    margin-left: 15px;
-    font-size: 15px;
+    margin-left: 12px;
+    font-size: 14px;
 }
 
-.change-group-status--available {
-    cursor: help;
-}
-
+.change-group-status--available,
 .change-group-status--blocked {
     cursor: help;
 }
 
-/* ==========================================
-   BRAK ZAWODNIKÓW
-========================================== */
-
 .change-group-empty {
-    padding: 40px 15px;
+    padding: 30px 12px;
     text-align: center;
     color: #888;
-    font-size: 14px;
+    font-size: 13px;
 }
 
-/* ==========================================
-   LEGENDA
-========================================== */
-
 .change-group-legend {
-    margin-top: 20px;
-
+    margin-top: 16px;
+    padding: 12px 14px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-
-    font-size: 14px;
+    gap: 5px;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    background: #f7f7f7;
+    font-size: 13px;
     color: #555;
 }
 
 .change-group-legend div {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 6px;
 }
 
-/* ==========================================
-   RESPONSYWNOŚĆ
-========================================== */
-
 @media (max-width: 800px) {
-
     .change-group-page {
-        padding: 20px 10px;
+        padding: 18px 10px;
     }
 
     .change-group-header h1 {
-        font-size: 26px;
+        font-size: 24px;
     }
 
     .change-group-grid {
         grid-template-columns: 1fr;
     }
-
 }
 
 @media (max-width: 500px) {
-
     .change-group-page {
-        padding: 15px 8px;
+        padding: 14px 8px;
     }
 
     .change-group-card-header {
-        padding: 14px 15px;
+        padding: 12px 14px;
     }
 
     .change-group-card-header h2 {
-        font-size: 16px;
+        font-size: 15px;
     }
 
     .change-group-player {
-        padding: 12px;
-        font-size: 14px;
+        padding: 10px;
+        font-size: 13px;
     }
 
+    .change-group-back {
+        width: 100%;
+    }
 }

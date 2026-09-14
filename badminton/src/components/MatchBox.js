@@ -51,7 +51,7 @@ export const FinalMatchBox = ({ p_fname, p_lname, place }) => {
       className="match-box"
       style={{
         backgroundColor:
-          p_fname === "" && p_lname === "" ? "#ffffffff" : "#2ecc71",
+          p_fname === "" && p_lname === "" ? "#ffffffff" : "#4CAF50",
         margin: "7px",
       }}
     >

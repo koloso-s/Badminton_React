@@ -1937,6 +1937,18 @@ async function updateTable(box_id, group, date, table, winnerId, loserId) {
       kolumnaWin = "31";
       kolumnaLose = "32";
       break;
+    case "7_8_1":
+      kolumnaWin = "7";
+      kolumnaLose = "8";
+      break;
+    case "5_6_1":
+      kolumnaWin = "5";
+      kolumnaLose = "6";
+      break;
+    case "1_2_1":
+      kolumnaWin = "1";
+      kolumnaLose = "2";
+      break;
   }
 
   if (!table || !kolumnaWin || !kolumnaLose) {

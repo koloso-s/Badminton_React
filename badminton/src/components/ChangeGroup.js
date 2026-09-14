@@ -7,7 +7,7 @@ const ChangeGroup = () => {
   const [advancedGroup, setAdvancedGroup] = useState([]);
 
   // ==========================================
-  // POBIERANIE GRUP
+  // POBIERANIE GRUP 
   // ==========================================
 
   const fetchGroups = async () => {

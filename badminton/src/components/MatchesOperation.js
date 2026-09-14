@@ -206,6 +206,8 @@ const EndMatch = ({
           <button onClick={onClose}>Zamknij</button>
           <button
             onClick={() => {
+              console.log(box_id);
+
               endMatch();
             }}
             disabled={winner === ""}
@@ -237,9 +239,9 @@ export const GoMatch = ({ GMatch, onClose, courts }) => {
               <h3>Zawodnicy:</h3>
 
               {match?.p1?.fname &&
-              match?.p1?.lname &&
-              match?.p2?.fname &&
-              match?.p2?.lname ? (
+                match?.p1?.lname &&
+                match?.p2?.fname &&
+                match?.p2?.lname ? (
                 <>
                   <p>
                     {match?.p1?.fname} {match?.p1?.lname}

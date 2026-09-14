@@ -135,7 +135,7 @@ const Tournament = ({ show }) => {
           "P1_4",
           "P1_2",
         ]);
-        setColumnsBottom(["7_8", "5_6", "1_2"]);
+        setColumnsBottom(["7_8", "5_6", "4", "3", "1_2"]);
         break;
       case "tabela_16x":
         setColumns([
@@ -150,7 +150,7 @@ const Tournament = ({ show }) => {
           "P1_4",
           "P1_2",
         ]);
-        setColumnsBottom(["13_16", "9_12", "7_8", "5_6", "1_2"]);
+        setColumnsBottom(["13_16", "9_12", "7_8", "5_6", "4", "3", "1_2"]);
         break;
       case "tabela_24x":
         setColumns([
@@ -175,6 +175,8 @@ const Tournament = ({ show }) => {
           "9_12",
           "7_8",
           "5_6",
+          "4",
+          "3",
           "1_2",
         ]);
         break;
@@ -205,6 +207,8 @@ const Tournament = ({ show }) => {
           "9_12",
           "7_8",
           "5_6",
+          "4",
+          "3",
           "1_2",
         ]);
         break;
@@ -511,6 +515,8 @@ const Tournament = ({ show }) => {
       "9_12": [[9, 10], "match", [11, 12]],
       "7_8": [7, "match", 8],
       "5_6": [5, "match", 6],
+      "4": [4],
+      "3": [3],
       "1_2": [1, "match", 2],
     };
 
@@ -567,6 +573,20 @@ const Tournament = ({ show }) => {
   return (
     <div className="tournament">
       <div className="tournament-header">
+        {!show && <Link to="/" className="back-link" style={{ margin: "1.4rem" }}>
+          ← Powrót do strony głównej
+        </Link>}
+        {selectedMatch && (
+          <MatchModal
+            match={selectedMatch}
+            onClose={() => setSelectedMatch(null)}
+            box_id={selectedMatch.box_id}
+            group={group}
+            table={tournament.tabela}
+            onMatchSaved={() => fetchTournamentPlayers(group)}
+            courts={tournament.mecze}
+          />
+        )}
         <h1>Grupa {group}</h1>
         <div style={{ marginBottom: "1rem" }} className="tournament-buttons">
           <button onClick={() => setGroup("podstawowa")} className={group === "podstawowa" ? "btn-select" : ""}>
@@ -612,26 +632,13 @@ const Tournament = ({ show }) => {
               }}
               key={idx}
             >
-              <h2>Miejsca: {column}</h2>
+              <h2>{(column === "3" || column === "4") ? "Miejsce" : "Miejsca"}: {column}</h2>
               {renderColumnMatchesBottom(column)}
             </div>
           ))}
         </div>
       )}
-      {!show && <Link to="/" className="back-link" style={{ margin: "1.4rem" }}>
-        ← Powrót do strony głównej
-      </Link>}
-      {selectedMatch && (
-        <MatchModal
-          match={selectedMatch}
-          onClose={() => setSelectedMatch(null)}
-          box_id={selectedMatch.box_id}
-          group={group}
-          table={tournament.tabela}
-          onMatchSaved={() => fetchTournamentPlayers(group)}
-          courts={tournament.mecze}
-        />
-      )}
+
       <div className="Button-courts">
         <button
           onClick={() => {

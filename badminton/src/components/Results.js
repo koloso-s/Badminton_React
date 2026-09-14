@@ -823,10 +823,6 @@ const Results = () => {
             : "Zaawansowana"}
         </h1>
 
-        <Link to="/">
-          Powrót do głównej
-        </Link>
-
         <div className="tournament-buttons">
 
           <button
@@ -836,9 +832,7 @@ const Results = () => {
                 : ""
             }
             onClick={() =>
-              setGroup(
-                "podstawowa"
-              )
+              setGroup("podstawowa")
             }
           >
             Grupa Podstawowa
@@ -851,15 +845,15 @@ const Results = () => {
                 : ""
             }
             onClick={() =>
-              setGroup(
-                "zaawansowana"
-              )
+              setGroup("zaawansowana")
             }
           >
             Grupa Zaawansowana
           </button>
 
         </div>
+
+        <Link to="/" className="back-link" style={{ margin: "1.4rem" }}>← Powrót do strony głównej</Link>
       </div>
 
       {/* ======================================
