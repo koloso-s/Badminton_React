@@ -60,17 +60,17 @@ const Tournament = ({ show }) => {
             );
         } else {
           timeout = setTimeout(() => {
-            setGroup((prevGroup) =>
-              prevGroup === "podstawowa"
-                ? "zaawansowana"
-                : "podstawowa"
-            );
+
             timeout = setTimeout(() => {
               window.scrollTo({
                 top: 0,
                 behavior: "auto",
               });
-
+              setGroup((prevGroup) =>
+                prevGroup === "podstawowa"
+                  ? "zaawansowana"
+                  : "podstawowa"
+              );
               timeout = setTimeout(() => {
                 startScrolling();
               }, 2000);

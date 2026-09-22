@@ -13,9 +13,18 @@ app.use(express.json());
 app.get("/api/players/:group", async (req, res) => {
   try {
     const { group } = req.params;
-    const [rows] = await db.query("SELECT * FROM zawodnik WHERE grupa = ?", [
-      group,
-    ]);
+
+    const [rows] = await db.query(
+      `
+      SELECT 
+        zawodnik.*,
+        DATE_FORMAT(group_change_date, '%Y-%m-%d') AS group_change_date
+      FROM zawodnik
+      WHERE grupa = ?
+      `,
+      [group]
+    );
+
     res.json(rows);
   } catch (err) {
     console.error(err);
@@ -47,7 +56,7 @@ app.put("/api/players/:id/change-group", async (req, res) => {
 
     await db.query(
       `UPDATE zawodnik 
-       SET grupa = ?, group_change_date = NOW()
+       SET grupa = ?, group_change_date = CURDATE()
        WHERE id = ?`,
       [newGroup, id],
     );

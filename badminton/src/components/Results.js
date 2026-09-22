@@ -12,10 +12,6 @@ const Results = () => {
   const [playersPodstawowa, setPlayersPodstawowa] = useState([]);
   const [playersZaawansowana, setPlayersZaawansowana] = useState([]);
 
-  // ==========================================
-  // PUNKTY ZA MIEJSCE
-  // ==========================================
-
   const punkty = {
     1: 100,
     2: 95,
@@ -58,10 +54,6 @@ const Results = () => {
     39: 1,
     40: 1,
   };
-
-  // ==========================================
-  // POBIERANIE DANYCH
-  // ==========================================
 
   useEffect(() => {
     const fetchData = async () => {
@@ -112,10 +104,6 @@ const Results = () => {
     fetchData();
   }, []);
 
-  // ==========================================
-  // NORMALIZACJA GRUPY
-  // ==========================================
-
   const normalizeGroup = (value) => {
     const normalized = String(value || "")
       .trim()
@@ -131,10 +119,6 @@ const Results = () => {
     return null;
   };
 
-  // ==========================================
-  // NORMALIZACJA DATY
-  // ==========================================
-
   const getDateOnly = (date) => {
     if (!date) {
       return null;
@@ -142,10 +126,6 @@ const Results = () => {
 
     return String(date).substring(0, 10);
   };
-
-  // ==========================================
-  // ŁĄCZENIE ZAWODNIKÓW Z OBU GRUP
-  // ==========================================
 
   const allPlayersMap = new Map();
 
@@ -180,12 +160,6 @@ const Results = () => {
         return;
       }
 
-      /*
-        Jeżeli ten sam zawodnik występuje
-        w obu endpointach, preferujemy rekord
-        zawierający informację o zmianie grupy.
-      */
-
       const existingChangeDate =
         getDateOnly(
           existing.group_change_date
@@ -208,16 +182,10 @@ const Results = () => {
         return;
       }
 
-      /*
-        Jeśli oba rekordy mają datę zmiany,
-        wybieramy ten z nowszą datą.
-      */
-
       if (
         newChangeDate &&
         existingChangeDate &&
-        newChangeDate >
-        existingChangeDate
+        newChangeDate > existingChangeDate
       ) {
         allPlayersMap.set(
           playerId,
@@ -237,29 +205,12 @@ const Results = () => {
     "zaawansowana"
   );
 
-  // ==========================================
-  // ZAWODNICY AKTUALNEJ GRUPY
-  // ==========================================
-
-  /*
-    Zawodnik jest wyświetlany w tabeli
-    swojej AKTUALNEJ grupy.
-
-    Jego wcześniejsze wyniki mogą jednak
-    pochodzić z poprzedniej grupy.
-  */
-
   const playersData = Array.from(
     allPlayersMap.values()
   ).filter(
     (player) =>
-      normalizeGroup(player.grupa) ===
-      group
+      normalizeGroup(player.grupa) === group
   );
-
-  // ==========================================
-  // WSZYSTKIE DATY TURNIEJÓW
-  // ==========================================
 
   const dates = Array.from(
     new Set([
@@ -271,51 +222,25 @@ const Results = () => {
     .filter(Boolean)
     .sort();
 
-  // ==========================================
-  // CZY ZAWODNIK ZMIENIŁ GRUPĘ
-  // ==========================================
-
   const hasChangedGroup = (player) => {
     return Boolean(
       player.group_change_date
     );
   };
 
-  // ==========================================
-  // POPRZEDNIA GRUPA
-  // ==========================================
-
   const getPreviousGroup = (
     currentGroup
   ) => {
-    if (
-      currentGroup === "podstawowa"
-    ) {
+    if (currentGroup === "podstawowa") {
       return "zaawansowana";
     }
 
-    if (
-      currentGroup === "zaawansowana"
-    ) {
+    if (currentGroup === "zaawansowana") {
       return "podstawowa";
     }
 
     return null;
   };
-
-  // ==========================================
-  // GRUPA ZAWODNIKA W DANEJ DACIE
-  // ==========================================
-
-  /*
-    group_change_date oznacza:
-
-    PRZED datą zmiany:
-    zawodnik należał do starej grupy.
-
-    OD daty zmiany:
-    zawodnik należy do aktualnej grupy.
-  */
 
   const getPlayerGroupForDate = (
     player,
@@ -327,10 +252,6 @@ const Results = () => {
     if (!currentGroup) {
       return null;
     }
-
-    /*
-      Brak zmiany grupy.
-    */
 
     if (!hasChangedGroup(player)) {
       return currentGroup;
@@ -351,30 +272,14 @@ const Results = () => {
       return currentGroup;
     }
 
-    /*
-      Przed zmianą był
-      w poprzedniej grupie.
-    */
-
-    if (
-      tournamentDate < changeDate
-    ) {
+    if (tournamentDate < changeDate) {
       return getPreviousGroup(
         currentGroup
       );
     }
 
-    /*
-      Od dnia zmiany jest
-      w aktualnej grupie.
-    */
-
     return currentGroup;
   };
-
-  // ==========================================
-  // PODSTAWOWA -> ZAAWANSOWANA
-  // ==========================================
 
   const movedFromBasicToAdvanced = (
     player
@@ -384,30 +289,9 @@ const Results = () => {
 
     return (
       hasChangedGroup(player) &&
-      currentGroup ===
-      "zaawansowana"
+      currentGroup === "zaawansowana"
     );
   };
-
-  // ==========================================
-  // CZY DZIELIĆ PUNKTY PRZEZ 2
-  // ==========================================
-
-  /*
-    PODSTAWOWA -> ZAAWANSOWANA
-
-    Punkty zdobyte PRZED zmianą,
-    czyli jeszcze w podstawowej,
-    są dzielone przez 2.
-
-    Punkty zdobyte OD dnia zmiany
-    w zaawansowanej są liczone normalnie.
-
-
-    ZAAWANSOWANA -> PODSTAWOWA
-
-    Wszystkie punkty są liczone normalnie.
-  */
 
   const shouldHalvePoints = (
     player,
@@ -436,14 +320,8 @@ const Results = () => {
       return false;
     }
 
-    return (
-      tournamentDate < changeDate
-    );
+    return tournamentDate < changeDate;
   };
-
-  // ==========================================
-  // POBIERANIE WYNIKÓW GRUPY
-  // ==========================================
 
   const getResultsForDate = (
     playerGroup,
@@ -465,10 +343,6 @@ const Results = () => {
         ? resultsPodstawowa
         : resultsZaawansowana;
 
-    /*
-      Standardowy klucz YYYY-MM-DD.
-    */
-
     if (
       Array.isArray(
         results[dateKey]
@@ -476,11 +350,6 @@ const Results = () => {
     ) {
       return results[dateKey];
     }
-
-    /*
-      Zabezpieczenie gdy backend zwraca
-      np. pełną datę z godziną.
-    */
 
     const matchingKey =
       Object.keys(results).find(
@@ -503,9 +372,32 @@ const Results = () => {
     return [];
   };
 
-  // ==========================================
-  // ZNAJDŹ WYNIK ZAWODNIKA
-  // ==========================================
+  const hasTournamentForGroup = (
+    playerGroup,
+    date
+  ) => {
+    if (!playerGroup) {
+      return false;
+    }
+
+    const dateKey =
+      getDateOnly(date);
+
+    if (!dateKey) {
+      return false;
+    }
+
+    const results =
+      playerGroup === "podstawowa"
+        ? resultsPodstawowa
+        : resultsZaawansowana;
+
+    return Object.keys(results).some(
+      (key) =>
+        getDateOnly(key) ===
+        dateKey
+    );
+  };
 
   const getResultFromGroup = (
     playerId,
@@ -531,25 +423,26 @@ const Results = () => {
 
     return (
       resultList.find((item) => {
+        const resultPlayerId =
+          item.zawodnik_id ??
+          item.player_id ??
+          item.id;
+
         if (
-          item.id === null ||
-          item.id === undefined ||
-          item.id === ""
+          resultPlayerId === null ||
+          resultPlayerId === undefined ||
+          resultPlayerId === ""
         ) {
           return false;
         }
 
         return (
-          Number(item.id) ===
+          Number(resultPlayerId) ===
           numericPlayerId
         );
       }) || null
     );
   };
-
-  // ==========================================
-  // OBLICZANIE PUNKTÓW
-  // ==========================================
 
   const getPoints = (
     player,
@@ -559,23 +452,12 @@ const Results = () => {
     const place =
       Number(miejsce);
 
-    if (
-      !Number.isFinite(place)
-    ) {
+    if (!Number.isFinite(place)) {
       return 0;
     }
 
     const normalPoints =
       punkty[place] || 0;
-
-    /*
-      Jeżeli zawodnik przeszedł:
-
-      PODSTAWOWA -> ZAAWANSOWANA
-
-      to wcześniejsze punkty
-      z podstawowej liczymy jako 50%.
-    */
 
     if (
       shouldHalvePoints(
@@ -583,37 +465,22 @@ const Results = () => {
         date
       )
     ) {
-      return Math.round(normalPoints / 2);
+
+      return Math.ceil(
+        normalPoints / 2
+      );
     }
 
     return normalPoints;
   };
 
-  // ==========================================
-  // BUDOWANIE RANKINGU
-  // ==========================================
-
   const players = playersData
     .map((player) => {
       const playerResults = {};
 
-      /*
-        Tutaj zapisujemy TYLKO turnieje,
-        w których zawodnik faktycznie brał udział.
-
-        Nieobecność nie daje 0 punktów
-        i nie bierze udziału w wyborze
-        najgorszego wyniku.
-      */
-
-      const playedTournaments = [];
+      const tournamentResults = [];
 
       dates.forEach((date) => {
-        /*
-          Ustalamy grupę zawodnika
-          w dniu turnieju.
-        */
-
         const playerGroup =
           getPlayerGroupForDate(
             player,
@@ -624,11 +491,15 @@ const Results = () => {
           return;
         }
 
-        /*
-          Szukamy wyniku zawodnika
-          dokładnie w grupie,
-          w której wtedy był.
-        */
+        const tournamentExists =
+          hasTournamentForGroup(
+            playerGroup,
+            date
+          );
+
+        if (!tournamentExists) {
+          return;
+        }
 
         const result =
           getResultFromGroup(
@@ -637,17 +508,16 @@ const Results = () => {
             playerGroup
           );
 
-        /*
-          BRAK WYNIKU = NIEOBECNOŚĆ
-
-          Nie dodajemy:
-          - 0 punktów,
-          - pustego wyniku,
-          - nie traktujemy tego
-            jako najgorszego meczu.
-        */
-
         if (!result) {
+          tournamentResults.push({
+            date,
+            miejsce: null,
+            punkty: 0,
+            grupa: playerGroup,
+            halved: false,
+            absent: true,
+          });
+
           return;
         }
 
@@ -664,7 +534,7 @@ const Results = () => {
             date
           );
 
-        playedTournaments.push({
+        tournamentResults.push({
           date,
 
           miejsce:
@@ -672,36 +542,26 @@ const Results = () => {
               result.miejsce
             ),
 
-          punkty: points,
+          punkty:
+            points,
 
           grupa:
             playerGroup,
 
           halved,
+
+          absent: false,
         });
       });
-
-      // ==========================================
-      // WYBÓR NAJGORSZEGO MECZU
-      // ==========================================
-
-      /*
-        Jeżeli zawodnik zagrał minimum
-        2 turnieje, odrzucamy jeden
-        najgorszy punktowo wynik.
-
-        Jeżeli zagrał tylko 1 turniej,
-        wynik jest liczony normalnie.
-      */
 
       let worstTournamentIndex = -1;
 
       if (
-        playedTournaments.length >= 2
+        tournamentResults.length >= 2
       ) {
         let lowestPoints = Infinity;
 
-        playedTournaments.forEach(
+        tournamentResults.forEach(
           (tournament, index) => {
             if (
               tournament.punkty <
@@ -717,25 +577,13 @@ const Results = () => {
         );
       }
 
-      // ==========================================
-      // SUMOWANIE WYNIKÓW
-      // ==========================================
-
       let totalPoints = 0;
 
-      playedTournaments.forEach(
+      tournamentResults.forEach(
         (tournament, index) => {
           const excluded =
             index ===
             worstTournamentIndex;
-
-          /*
-            Wynik najgorszego meczu nadal
-            wyświetlamy w tabeli.
-
-            Dostaje tylko znacznik excluded,
-            żeby nie został dodany do sumy.
-          */
 
           playerResults[
             tournament.date
@@ -752,13 +600,11 @@ const Results = () => {
             halved:
               tournament.halved,
 
+            absent:
+              tournament.absent,
+
             excluded,
           };
-
-          /*
-            Najgorszego meczu
-            nie dodajemy do wyniku ogólnego.
-          */
 
           if (!excluded) {
             totalPoints +=
@@ -777,10 +623,6 @@ const Results = () => {
       };
     })
 
-    // ==========================================
-    // SORTOWANIE RANKINGU
-    // ==========================================
-
     .sort((a, b) => {
       if (
         b.totalPoints !==
@@ -792,27 +634,14 @@ const Results = () => {
         );
       }
 
-      /*
-        Przy takiej samej liczbie punktów
-        niższe ID jest wyżej.
-      */
-
       return (
         Number(a.id) -
         Number(b.id)
       );
     });
 
-  // ==========================================
-  // RENDER
-  // ==========================================
-
   return (
     <div className="results">
-
-      {/* ======================================
-          NAGŁÓWEK
-      ====================================== */}
 
       <div className="tournament-header">
 
@@ -853,12 +682,17 @@ const Results = () => {
 
         </div>
 
-        <Link to="/" className="back-link" style={{ margin: "1.4rem" }}>← Powrót do strony głównej</Link>
-      </div>
+        <Link
+          to="/"
+          className="back-link"
+          style={{
+            margin: "1.4rem",
+          }}
+        >
+          ← Powrót do strony głównej
+        </Link>
 
-      {/* ======================================
-          TABELA
-      ====================================== */}
+      </div>
 
       <div className="results-table-wrapper">
 
@@ -947,13 +781,9 @@ const Results = () => {
                       }
                     >
 
-                      {/* POZYCJA */}
-
                       <td className="position">
                         {index + 1}
                       </td>
-
-                      {/* ZAWODNIK */}
 
                       <td className="player-name">
 
@@ -981,13 +811,9 @@ const Results = () => {
 
                       </td>
 
-                      {/* SUMA PUNKTÓW */}
-
                       <td className="total-points">
                         {player.totalPoints}
                       </td>
-
-                      {/* POSZCZEGÓLNE TURNIEJE */}
 
                       {dates.map((date) => {
                         const result =
@@ -1000,42 +826,52 @@ const Results = () => {
                             key={date}
                           >
 
-                            {/* MIEJSCE */}
-
                             <td className="place">
 
                               {result ? (
-                                <span
-                                  style={
-                                    result.excluded
-                                      ? {
-                                        textDecoration:
-                                          "line-through",
-                                        opacity: 0.55,
-                                      }
-                                      : {}
-                                  }
-                                >
-                                  {
-                                    result.miejsce
-                                  }
-                                </span>
+                                result.absent ? (
+                                  <span
+                                    style={{
+                                      opacity: 0.5,
+                                    }}
+                                    title="Nieobecność"
+                                  >
+                                    —
+                                  </span>
+                                ) : (
+                                  <span
+                                    style={
+                                      result.excluded
+                                        ? {
+                                          textDecoration:
+                                            "line-through",
+                                          opacity:
+                                            0.55,
+                                        }
+                                        : {}
+                                    }
+                                  >
+                                    {
+                                      result.miejsce
+                                    }
+                                  </span>
+                                )
                               ) : (
                                 ""
                               )}
 
                             </td>
 
-                            {/* PUNKTY */}
-
                             <td
                               className="place-points"
                               title={
-                                result?.excluded
-                                  ? "Najgorszy rozegrany wynik — nie jest liczony do wyniku ogólnego"
-                                  : result?.halved
-                                    ? "50% wcześniejszych punktów z grupy podstawowej po przejściu do zaawansowanej"
-                                    : ""
+                                result?.absent
+                                  ? "Nieobecność — 0 punktów"
+                                  : result?.excluded
+                                    ? "Najgorszy wynik — nie jest liczony do wyniku ogólnego"
+                                    : result?.halved
+                                      ? "50% punktów zdobytych wcześniej w grupie podstawowej"
+                                      : ""
                               }
                             >
 
@@ -1048,7 +884,8 @@ const Results = () => {
                                         ? {
                                           textDecoration:
                                             "line-through",
-                                          opacity: 0.55,
+                                          opacity:
+                                            0.55,
                                         }
                                         : {}
                                     }
@@ -1058,18 +895,14 @@ const Results = () => {
                                     }
                                   </span>
 
-                                  {/* 50% PUNKTÓW */}
-
                                   {result.halved && (
                                     <span
                                       className="halved-points"
-                                      title="Punkty zostały podzielone przez 2"
+                                      title="Punkty podzielone przez 2 i zaokrąglone w górę"
                                     >
                                       *
                                     </span>
                                   )}
-
-                                  {/* NAJGORSZY MECZ */}
 
                                   {result.excluded && (
                                     <span
@@ -1124,10 +957,6 @@ const Results = () => {
 
       </div>
 
-      {/* ======================================
-          LEGENDA
-      ====================================== */}
-
       <div className="results-legend">
 
         <div>
@@ -1135,15 +964,19 @@ const Results = () => {
         </div>
 
         <div>
-          * 50% wcześniejszych punktów z grupy podstawowej po przejściu do grupy zaawansowanej
+          * Podstawowa → Zaawansowana: wcześniejsze punkty z podstawowej są dzielone przez 2 i zaokrąglane w górę
         </div>
 
         <div>
-          ✕ Najgorszy rozegrany wynik zawodnika nie jest liczony do wyniku ogólnego
+          Zaawansowana → Podstawowa: wszystkie punkty pozostają bez zmian
         </div>
 
         <div>
-          Brak udziału w turnieju nie daje 0 punktów i nie jest liczony jako najgorszy wynik
+          ✕ Jeden najgorszy wynik nie jest liczony do wyniku ogólnego
+        </div>
+
+        <div>
+          — Nieobecność = 0 punktów, najgorszy wynik
         </div>
 
       </div>
