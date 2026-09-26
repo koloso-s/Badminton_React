@@ -157,11 +157,11 @@ app.post("/api/tournament/start", async (req, res) => {
   try {
     const [tabele] = await db.query(
       "SELECT COUNT(*) as count FROM turniej_tabele where data = ?",
-      [new Date().toISOString().split("T")[0]],
+      [new Date().toLocaleDateString("sv-SE")],
     );
     if (parseInt(tabele[0].count) === 0) {
       const grupy = ["podstawowa", "zaawansowana"];
-      const date = new Date().toISOString().split("T")[0];
+      const date = new Date().toLocaleDateString("sv-SE");
 
       async function addTable(tableName, group, date, players) {
         await db.query(`INSERT INTO ${tableName} (grupa, data) VALUES (?, ?)`, [
@@ -206,8 +206,8 @@ app.post("/api/tournament/start", async (req, res) => {
             await addTable("tabela_24x", grupa, date, rows);
           } else if (count > 24 && count <= 32) {
             await addTable("tabela_32x", grupa, date, rows);
-          } else if (count > 32 && count <= 40) {
-            await addTable("tabela_40x", grupa, date, rows);
+          } else if (count > 32 && count <= 48) {
+            await addTable("tabela_48x", grupa, date, rows);
           }
         }
       }
@@ -786,7 +786,460 @@ app.get("/api/tournament/gettournament/:grupa", async (req, res) => {
             (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`31_32_2\`) AS \`31_32_2_lname\`
         `;
 
-    const sql = `SELECT ${tableName === "tabela_8x" ? query_x8 : tableName === "tabela_16x" ? query_x16 : tableName === "tabela_24x" ? query_x24 : query_x32} FROM ?? t WHERE t.grupa = ? AND t.data = ?`;
+    const query_x48 =
+      query_x32 +
+      `,
+      (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`main33\`) AS \`main33_fname\`,
+      (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`main33\`) AS \`main33_lname\`,
+      (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`main34\`) AS \`main34_fname\`,
+      (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`main34\`) AS \`main34_lname\`,
+      (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`main35\`) AS \`main35_fname\`,
+      (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`main35\`) AS \`main35_lname\`,
+      (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`main36\`) AS \`main36_fname\`,
+      (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`main36\`) AS \`main36_lname\`,
+      (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`main37\`) AS \`main37_fname\`,
+      (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`main37\`) AS \`main37_lname\`,
+      (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`main38\`) AS \`main38_fname\`,
+      (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`main38\`) AS \`main38_lname\`,
+      (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`main39\`) AS \`main39_fname\`,
+      (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`main39\`) AS \`main39_lname\`,
+      (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`main40\`) AS \`main40_fname\`,
+      (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`main40\`) AS \`main40_lname\`,
+      (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`main41\`) AS \`main41_fname\`,
+      (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`main41\`) AS \`main41_lname\`,
+      (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`main42\`) AS \`main42_fname\`,
+      (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`main42\`) AS \`main42_lname\`,
+      (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`main43\`) AS \`main43_fname\`,
+      (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`main43\`) AS \`main43_lname\`,
+      (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`main44\`) AS \`main44_fname\`,
+      (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`main44\`) AS \`main44_lname\`,
+      (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`main45\`) AS \`main45_fname\`,
+      (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`main45\`) AS \`main45_lname\`,
+      (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`main46\`) AS \`main46_fname\`,
+      (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`main46\`) AS \`main46_lname\`,
+      (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`main47\`) AS \`main47_fname\`,
+      (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`main47\`) AS \`main47_lname\`,
+      (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`main48\`) AS \`main48_fname\`,
+      (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`main48\`) AS \`main48_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Pmain_1\`) AS \`Pmain_1_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Pmain_1\`) AS \`Pmain_1_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Pmain_2\`) AS \`Pmain_2_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Pmain_2\`) AS \`Pmain_2_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Pmain_3\`) AS \`Pmain_3_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Pmain_3\`) AS \`Pmain_3_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Pmain_4\`) AS \`Pmain_4_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Pmain_4\`) AS \`Pmain_4_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Pmain_5\`) AS \`Pmain_5_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Pmain_5\`) AS \`Pmain_5_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Pmain_6\`) AS \`Pmain_6_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Pmain_6\`) AS \`Pmain_6_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Pmain_7\`) AS \`Pmain_7_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Pmain_7\`) AS \`Pmain_7_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Pmain_8\`) AS \`Pmain_8_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Pmain_8\`) AS \`Pmain_8_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Pmain_9\`) AS \`Pmain_9_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Pmain_9\`) AS \`Pmain_9_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Pmain_10\`) AS \`Pmain_10_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Pmain_10\`) AS \`Pmain_10_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Pmain_11\`) AS \`Pmain_11_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Pmain_11\`) AS \`Pmain_11_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Pmain_12\`) AS \`Pmain_12_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Pmain_12\`) AS \`Pmain_12_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Pmain_13\`) AS \`Pmain_13_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Pmain_13\`) AS \`Pmain_13_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Pmain_14\`) AS \`Pmain_14_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Pmain_14\`) AS \`Pmain_14_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Pmain_15\`) AS \`Pmain_15_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Pmain_15\`) AS \`Pmain_15_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Pmain_16\`) AS \`Pmain_16_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Pmain_16\`) AS \`Pmain_16_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_1\`) AS \`Lmain_1_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_1\`) AS \`Lmain_1_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_2\`) AS \`Lmain_2_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_2\`) AS \`Lmain_2_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_3\`) AS \`Lmain_3_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_3\`) AS \`Lmain_3_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_4\`) AS \`Lmain_4_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_4\`) AS \`Lmain_4_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_5\`) AS \`Lmain_5_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_5\`) AS \`Lmain_5_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_6\`) AS \`Lmain_6_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_6\`) AS \`Lmain_6_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_7\`) AS \`Lmain_7_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_7\`) AS \`Lmain_7_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_8\`) AS \`Lmain_8_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_8\`) AS \`Lmain_8_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_9\`) AS \`Lmain_9_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_9\`) AS \`Lmain_9_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_10\`) AS \`Lmain_10_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_10\`) AS \`Lmain_10_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_11\`) AS \`Lmain_11_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_11\`) AS \`Lmain_11_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_12\`) AS \`Lmain_12_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_12\`) AS \`Lmain_12_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_13\`) AS \`Lmain_13_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_13\`) AS \`Lmain_13_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_14\`) AS \`Lmain_14_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_14\`) AS \`Lmain_14_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_15\`) AS \`Lmain_15_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_15\`) AS \`Lmain_15_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_16\`) AS \`Lmain_16_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_16\`) AS \`Lmain_16_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_17\`) AS \`Lmain_17_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_17\`) AS \`Lmain_17_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_18\`) AS \`Lmain_18_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_18\`) AS \`Lmain_18_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_19\`) AS \`Lmain_19_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_19\`) AS \`Lmain_19_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_20\`) AS \`Lmain_20_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_20\`) AS \`Lmain_20_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_21\`) AS \`Lmain_21_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_21\`) AS \`Lmain_21_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_22\`) AS \`Lmain_22_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_22\`) AS \`Lmain_22_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_23\`) AS \`Lmain_23_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_23\`) AS \`Lmain_23_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_24\`) AS \`Lmain_24_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_24\`) AS \`Lmain_24_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_25\`) AS \`Lmain_25_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_25\`) AS \`Lmain_25_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_26\`) AS \`Lmain_26_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_26\`) AS \`Lmain_26_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_27\`) AS \`Lmain_27_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_27\`) AS \`Lmain_27_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_28\`) AS \`Lmain_28_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_28\`) AS \`Lmain_28_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_29\`) AS \`Lmain_29_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_29\`) AS \`Lmain_29_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_30\`) AS \`Lmain_30_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_30\`) AS \`Lmain_30_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_31\`) AS \`Lmain_31_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_31\`) AS \`Lmain_31_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`Lmain_32\`) AS \`Lmain_32_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`Lmain_32\`) AS \`Lmain_32_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33\`) AS \`33_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33\`) AS \`33_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`34\`) AS \`34_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`34\`) AS \`34_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`35\`) AS \`35_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`35\`) AS \`35_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`36\`) AS \`36_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`36\`) AS \`36_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`37\`) AS \`37_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`37\`) AS \`37_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`38\`) AS \`38_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`38\`) AS \`38_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`39\`) AS \`39_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`39\`) AS \`39_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`40\`) AS \`40_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`40\`) AS \`40_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`41\`) AS \`41_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`41\`) AS \`41_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`42\`) AS \`42_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`42\`) AS \`42_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`43\`) AS \`43_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`43\`) AS \`43_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`44\`) AS \`44_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`44\`) AS \`44_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`45\`) AS \`45_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`45\`) AS \`45_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`46\`) AS \`46_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`46\`) AS \`46_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`47\`) AS \`47_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`47\`) AS \`47_lname\`,
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`48\`) AS \`48_fname\`,
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`48\`) AS \`48_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_48_1\`) AS \`33_48_1_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_48_1\`) AS \`33_48_1_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_48_2\`) AS \`33_48_2_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_48_2\`) AS \`33_48_2_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_48_3\`) AS \`33_48_3_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_48_3\`) AS \`33_48_3_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_48_4\`) AS \`33_48_4_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_48_4\`) AS \`33_48_4_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_48_5\`) AS \`33_48_5_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_48_5\`) AS \`33_48_5_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_48_6\`) AS \`33_48_6_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_48_6\`) AS \`33_48_6_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_48_7\`) AS \`33_48_7_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_48_7\`) AS \`33_48_7_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_48_8\`) AS \`33_48_8_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_48_8\`) AS \`33_48_8_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_48_9\`) AS \`33_48_9_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_48_9\`) AS \`33_48_9_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_48_10\`) AS \`33_48_10_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_48_10\`) AS \`33_48_10_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_48_11\`) AS \`33_48_11_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_48_11\`) AS \`33_48_11_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_48_12\`) AS \`33_48_12_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_48_12\`) AS \`33_48_12_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_48_13\`) AS \`33_48_13_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_48_13\`) AS \`33_48_13_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_48_14\`) AS \`33_48_14_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_48_14\`) AS \`33_48_14_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_48_15\`) AS \`33_48_15_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_48_15\`) AS \`33_48_15_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_48_16\`) AS \`33_48_16_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_48_16\`) AS \`33_48_16_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_40_1\`) AS \`33_40_1_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_40_1\`) AS \`33_40_1_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_40_2\`) AS \`33_40_2_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_40_2\`) AS \`33_40_2_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_40_3\`) AS \`33_40_3_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_40_3\`) AS \`33_40_3_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_40_4\`) AS \`33_40_4_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_40_4\`) AS \`33_40_4_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_40_5\`) AS \`33_40_5_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_40_5\`) AS \`33_40_5_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_40_6\`) AS \`33_40_6_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_40_6\`) AS \`33_40_6_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_40_7\`) AS \`33_40_7_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_40_7\`) AS \`33_40_7_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_40_8\`) AS \`33_40_8_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_40_8\`) AS \`33_40_8_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`41_48_1\`) AS \`41_48_1_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`41_48_1\`) AS \`41_48_1_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`41_48_2\`) AS \`41_48_2_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`41_48_2\`) AS \`41_48_2_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`41_48_3\`) AS \`41_48_3_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`41_48_3\`) AS \`41_48_3_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`41_48_4\`) AS \`41_48_4_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`41_48_4\`) AS \`41_48_4_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`41_48_5\`) AS \`41_48_5_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`41_48_5\`) AS \`41_48_5_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`41_48_6\`) AS \`41_48_6_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`41_48_6\`) AS \`41_48_6_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`41_48_7\`) AS \`41_48_7_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`41_48_7\`) AS \`41_48_7_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`41_48_8\`) AS \`41_48_8_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`41_48_8\`) AS \`41_48_8_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_36_1\`) AS \`33_36_1_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_36_1\`) AS \`33_36_1_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_36_2\`) AS \`33_36_2_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_36_2\`) AS \`33_36_2_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_36_3\`) AS \`33_36_3_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_36_3\`) AS \`33_36_3_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_36_4\`) AS \`33_36_4_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_36_4\`) AS \`33_36_4_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`37_40_1\`) AS \`37_40_1_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`37_40_1\`) AS \`37_40_1_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`37_40_2\`) AS \`37_40_2_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`37_40_2\`) AS \`37_40_2_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`37_40_3\`) AS \`37_40_3_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`37_40_3\`) AS \`37_40_3_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`37_40_4\`) AS \`37_40_4_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`37_40_4\`) AS \`37_40_4_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`41_44_1\`) AS \`41_44_1_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`41_44_1\`) AS \`41_44_1_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`41_44_2\`) AS \`41_44_2_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`41_44_2\`) AS \`41_44_2_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`41_44_3\`) AS \`41_44_3_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`41_44_3\`) AS \`41_44_3_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`41_44_4\`) AS \`41_44_4_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`41_44_4\`) AS \`41_44_4_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`45_48_1\`) AS \`45_48_1_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`45_48_1\`) AS \`45_48_1_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`45_48_2\`) AS \`45_48_2_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`45_48_2\`) AS \`45_48_2_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`45_48_3\`) AS \`45_48_3_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`45_48_3\`) AS \`45_48_3_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`45_48_4\`) AS \`45_48_4_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`45_48_4\`) AS \`45_48_4_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_34_1\`) AS \`33_34_1_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_34_1\`) AS \`33_34_1_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`33_34_2\`) AS \`33_34_2_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`33_34_2\`) AS \`33_34_2_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`35_36_1\`) AS \`35_36_1_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`35_36_1\`) AS \`35_36_1_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`35_36_2\`) AS \`35_36_2_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`35_36_2\`) AS \`35_36_2_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`37_38_1\`) AS \`37_38_1_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`37_38_1\`) AS \`37_38_1_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`37_38_2\`) AS \`37_38_2_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`37_38_2\`) AS \`37_38_2_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`39_40_1\`) AS \`39_40_1_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`39_40_1\`) AS \`39_40_1_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`39_40_2\`) AS \`39_40_2_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`39_40_2\`) AS \`39_40_2_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`41_42_1\`) AS \`41_42_1_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`41_42_1\`) AS \`41_42_1_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`41_42_2\`) AS \`41_42_2_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`41_42_2\`) AS \`41_42_2_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`43_44_1\`) AS \`43_44_1_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`43_44_1\`) AS \`43_44_1_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`43_44_2\`) AS \`43_44_2_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`43_44_2\`) AS \`43_44_2_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`45_46_1\`) AS \`45_46_1_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`45_46_1\`) AS \`45_46_1_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`45_46_2\`) AS \`45_46_2_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`45_46_2\`) AS \`45_46_2_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`47_48_1\`) AS \`47_48_1_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`47_48_1\`) AS \`47_48_1_lname\`,
+
+        (SELECT z.fname FROM zawodnik z WHERE z.id = t.\`47_48_2\`) AS \`47_48_2_fname\`,
+
+        (SELECT z.lname FROM zawodnik z WHERE z.id = t.\`47_48_2\`) AS \`47_48_2_lname\`
+        `;
+
+    let selectedQuery;
+
+    switch (tableName) {
+      case "tabela_8x":
+        selectedQuery = query_x8;
+        break;
+      case "tabela_16x":
+        selectedQuery = query_x16;
+        break;
+      case "tabela_24x":
+        selectedQuery = query_x24;
+        break;
+      case "tabela_32x":
+        selectedQuery = query_x32;
+        break;
+      case "tabela_48x":
+        selectedQuery = query_x48;
+        break;
+      default:
+        return res.status(400).json({
+          error: `Unknown table: ${tableName}`,
+        });
+    }
+
+    const sql = `
+  SELECT ${selectedQuery}
+  FROM ?? t
+  WHERE t.grupa = ? AND t.data = ?
+`;
+
     const [rows] = await db.query(sql, [tableName, grupa, date]);
     const [matchs] = await db.query(
       `SELECT w.status, z1.fname AS player1_fname, z1.lname AS player1_lname, z2.fname AS player2_fname, z2.lname AS player2_lname,box_id,w.boisko,w.grupa,w.tabela FROM wyniki w LEFT JOIN zawodnik z1 ON z1.id = w.player1_id LEFT JOIN zawodnik z2 ON z2.id = w.player2_id WHERE DATE(w.data) = ?;`,
@@ -861,28 +1314,242 @@ app.get("/api/tournament/gettournament/:grupa", async (req, res) => {
                 "main31",
                 "main2",
               ]
-              : [
-                "main17",
-                "main16",
-                "main9",
-                "main24",
-                "main21",
-                "main12",
-                "main13",
-                "main20",
-                "main19",
-                "main14",
-                "main11",
-                "main22",
-                "main23",
-                "main10",
-                "main15",
-                "main18",
-              ];
+              : tableName === "tabela_48x"
+                ? [
+                  "main43",
+                  "main34",
+                  "main40",
+                  "main46",
+                  "main37",
+                  "main41",
+                  "main18",
+                  "main15",
+                  "main10",
+                  "main14",
+                  "main29",
+                  "main31",
+                  "main38",
+                  "main8",
+                  "main21",
+                  "main33",
+                  "main24",
+                  "main32",
+                  "main12",
+                  "main27",
+                  "main17",
+                  "main45",
+                  "main22",
+                  "main3",
+                  "main4",
+                  "main6",
+                  "main26",
+                  "main2",
+                  "main35",
+                  "main36",
+                  "main5",
+                  "main44"
+                ]
+                : [
+                  "main17",
+                  "main16",
+                  "main9",
+                  "main24",
+                  "main21",
+                  "main12",
+                  "main13",
+                  "main20",
+                  "main19",
+                  "main14",
+                  "main11",
+                  "main22",
+                  "main23",
+                  "main10",
+                  "main15",
+                  "main18",
+                ];
       const main = mainOrder.map((key) => ({
         fname: row[`${key}_fname`] || "",
         lname: row[`${key}_lname`] || "",
       }));
+
+      function setTable_48x_tempContent() {
+        const mainOrder = [
+          "Pmain_1",
+          "main16",
+          "Pmain_2",
+          "main28",
+          "Pmain_3",
+          "main13",
+          "Pmain_4",
+          "main30",
+          "Pmain_5",
+          "main20",
+          "Pmain_6",
+          "main25",
+          "Pmain_7",
+          "main39",
+          "Pmain_8",
+          "main7",
+          "Pmain_9",
+          "main19",
+          "Pmain_10",
+          "main42",
+          "Pmain_11",
+          "main48",
+          "Pmain_12",
+          "main9",
+          "Pmain_13",
+          "main47",
+          "Pmain_14",
+          "main23",
+          "Pmain_15",
+          "main1",
+          "Pmain_16",
+          "main11",
+        ];
+
+        const Pmain = mainOrder.map((key) => ({
+          fname: row[`${key}_fname`] || "",
+          lname: row[`${key}_lname`] || "",
+        }));
+
+        const Lmain = Array.from({ length: 32 }, (_, i) => ({
+          fname: row[`Lmain_${i + 1}_fname`] || "",
+          lname: row[`Lmain_${i + 1}_lname`] || "",
+        }));
+
+        return {
+          Pmain,
+          Lmain,
+        };
+      }
+
+      function setTable_48xContent() {
+        // 33_48
+        const cols33_48 = Array.from({ length: 16 }, (_, i) => ({
+          fname: row[`33_48_${i + 1}_fname`] || "",
+          lname: row[`33_48_${i + 1}_lname`] || "",
+        }));
+
+        // 33_40
+        const cols33_40 = Array.from({ length: 8 }, (_, i) => ({
+          fname: row[`33_40_${i + 1}_fname`] || "",
+          lname: row[`33_40_${i + 1}_lname`] || "",
+        }));
+
+        // 41_48
+        const cols41_48 = Array.from({ length: 8 }, (_, i) => ({
+          fname: row[`41_48_${i + 1}_fname`] || "",
+          lname: row[`41_48_${i + 1}_lname`] || "",
+        }));
+
+        // 33_36
+        const cols33_36 = Array.from({ length: 4 }, (_, i) => ({
+          fname: row[`33_36_${i + 1}_fname`] || "",
+          lname: row[`33_36_${i + 1}_lname`] || "",
+        }));
+
+        // 37_40
+        const cols37_40 = Array.from({ length: 4 }, (_, i) => ({
+          fname: row[`37_40_${i + 1}_fname`] || "",
+          lname: row[`37_40_${i + 1}_lname`] || "",
+        }));
+
+        // 41_44
+        const cols41_44 = Array.from({ length: 4 }, (_, i) => ({
+          fname: row[`41_44_${i + 1}_fname`] || "",
+          lname: row[`41_44_${i + 1}_lname`] || "",
+        }));
+
+        // 45_48
+        const cols45_48 = Array.from({ length: 4 }, (_, i) => ({
+          fname: row[`45_48_${i + 1}_fname`] || "",
+          lname: row[`45_48_${i + 1}_lname`] || "",
+        }));
+
+        return {
+          "33_48": cols33_48,
+          "33_40": cols33_40,
+          "41_48": cols41_48,
+
+          "33_36": cols33_36,
+          "37_40": cols37_40,
+          "41_44": cols41_44,
+          "45_48": cols45_48,
+
+          "33_34_1": {
+            fname: row[`33_34_1_fname`] || "",
+            lname: row[`33_34_1_lname`] || "",
+          },
+          "33_34_2": {
+            fname: row[`33_34_2_fname`] || "",
+            lname: row[`33_34_2_lname`] || "",
+          },
+
+          "35_36_1": {
+            fname: row[`35_36_1_fname`] || "",
+            lname: row[`35_36_1_lname`] || "",
+          },
+          "35_36_2": {
+            fname: row[`35_36_2_fname`] || "",
+            lname: row[`35_36_2_lname`] || "",
+          },
+
+          "37_38_1": {
+            fname: row[`37_38_1_fname`] || "",
+            lname: row[`37_38_1_lname`] || "",
+          },
+          "37_38_2": {
+            fname: row[`37_38_2_fname`] || "",
+            lname: row[`37_38_2_lname`] || "",
+          },
+
+          "39_40_1": {
+            fname: row[`39_40_1_fname`] || "",
+            lname: row[`39_40_1_lname`] || "",
+          },
+          "39_40_2": {
+            fname: row[`39_40_2_fname`] || "",
+            lname: row[`39_40_2_lname`] || "",
+          },
+
+          "41_42_1": {
+            fname: row[`41_42_1_fname`] || "",
+            lname: row[`41_42_1_lname`] || "",
+          },
+          "41_42_2": {
+            fname: row[`41_42_2_fname`] || "",
+            lname: row[`41_42_2_lname`] || "",
+          },
+
+          "43_44_1": {
+            fname: row[`43_44_1_fname`] || "",
+            lname: row[`43_44_1_lname`] || "",
+          },
+          "43_44_2": {
+            fname: row[`43_44_2_fname`] || "",
+            lname: row[`43_44_2_lname`] || "",
+          },
+
+          "45_46_1": {
+            fname: row[`45_46_1_fname`] || "",
+            lname: row[`45_46_1_lname`] || "",
+          },
+          "45_46_2": {
+            fname: row[`45_46_2_fname`] || "",
+            lname: row[`45_46_2_lname`] || "",
+          },
+
+          "47_48_1": {
+            fname: row[`47_48_1_fname`] || "",
+            lname: row[`47_48_1_lname`] || "",
+          },
+          "47_48_2": {
+            fname: row[`47_48_2_fname`] || "",
+            lname: row[`47_48_2_lname`] || "",
+          },
+        };
+      }
 
       function setTable_32xContent() {
         //cols25_32
@@ -1222,9 +1889,26 @@ app.get("/api/tournament/gettournament/:grupa", async (req, res) => {
             };
           }
           break;
+        case "tabela_48x":
+          for (let i = 1; i <= 48; i++) {
+            singleCols[i] = {
+              fname: row[`${i}_fname`] || "",
+              lname: row[`${i}_lname`] || "",
+            };
+          }
+          break;
       }
 
       return {
+        ...(tableName === "tabela_48x"
+          ? {
+            ...setTable_48x_tempContent(),
+            ...setTable_48xContent(),
+            ...setTable_32xContent(),
+            ...setTable_24xContent(),
+            ...setTable_16xContent(),
+          }
+          : {}),
         ...(tableName === "tabela_32x"
           ? {
             ...setTable_32xContent(),
@@ -1256,7 +1940,11 @@ app.get("/api/tournament/gettournament/:grupa", async (req, res) => {
       };
     });
 
-    res.json(mapRowsToPlayers[0]);
+    if (mapRowsToPlayers.length === 0) {
+      return res.json({});
+    }
+
+    return res.json(mapRowsToPlayers[0]);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Database error" });
@@ -1320,6 +2008,9 @@ async function updateTable(box_id, group, date, table, winnerId, loserId) {
       } else if (table == "tabela_32x") {
         kolumnaWin = "p1_16_1";
         kolumnaLose = "l1_16_1";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "Pmain_1";
+        kolumnaLose = "Lmain_1";
       }
       break;
 
@@ -1336,6 +2027,9 @@ async function updateTable(box_id, group, date, table, winnerId, loserId) {
       } else if (table == "tabela_32x") {
         kolumnaWin = "p1_16_2";
         kolumnaLose = "l1_16_2";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "Pmain_2";
+        kolumnaLose = "Lmain_3";
       }
       break;
 
@@ -1352,6 +2046,9 @@ async function updateTable(box_id, group, date, table, winnerId, loserId) {
       } else if (table == "tabela_32x") {
         kolumnaWin = "p1_16_3";
         kolumnaLose = "l1_16_3";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "Pmain_3";
+        kolumnaLose = "Lmain_5";
       }
       break;
 
@@ -1368,6 +2065,9 @@ async function updateTable(box_id, group, date, table, winnerId, loserId) {
       } else if (table == "tabela_32x") {
         kolumnaWin = "p1_16_4";
         kolumnaLose = "l1_16_4";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "Pmain_4";
+        kolumnaLose = "Lmain_7";
       }
       break;
 
@@ -1381,6 +2081,9 @@ async function updateTable(box_id, group, date, table, winnerId, loserId) {
       } else if (table == "tabela_32x") {
         kolumnaWin = "p1_16_5";
         kolumnaLose = "l1_16_5";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "Pmain_5";
+        kolumnaLose = "Lmain_9";
       }
       break;
 
@@ -1394,6 +2097,9 @@ async function updateTable(box_id, group, date, table, winnerId, loserId) {
       } else if (table == "tabela_32x") {
         kolumnaWin = "p1_16_6";
         kolumnaLose = "l1_16_6";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "Pmain_6";
+        kolumnaLose = "Lmain_11";
       }
       break;
 
@@ -1407,6 +2113,9 @@ async function updateTable(box_id, group, date, table, winnerId, loserId) {
       } else if (table == "tabela_32x") {
         kolumnaWin = "p1_16_7";
         kolumnaLose = "l1_16_7";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "Pmain_7";
+        kolumnaLose = "Lmain_13";
       }
       break;
 
@@ -1420,46 +2129,97 @@ async function updateTable(box_id, group, date, table, winnerId, loserId) {
       } else if (table == "tabela_32x") {
         kolumnaWin = "p1_16_8";
         kolumnaLose = "l1_16_8";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "Pmain_8";
+        kolumnaLose = "Lmain_15";
       }
       break;
     case "main_9":
-      kolumnaWin = "p1_16_9";
-      kolumnaLose = "l1_16_9";
+      if (table == "tabela_32x") {
+        kolumnaWin = "p1_16_9";
+        kolumnaLose = "l1_16_9";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "Pmain_9";
+        kolumnaLose = "Lmain_17";
+      }
+
       break;
 
     case "main_10":
-      kolumnaWin = "p1_16_10";
-      kolumnaLose = "l1_16_10";
+      if (table == "tabela_32x") {
+        kolumnaWin = "p1_16_10";
+        kolumnaLose = "l1_16_10";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "Pmain_10";
+        kolumnaLose = "Lmain_19";
+      }
+
       break;
 
     case "main_11":
-      kolumnaWin = "p1_16_11";
-      kolumnaLose = "l1_16_11";
+      if (table == "tabela_32x") {
+        kolumnaWin = "p1_16_11";
+        kolumnaLose = "l1_16_11";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "Pmain_11";
+        kolumnaLose = "Lmain_21";
+      }
+
       break;
 
     case "main_12":
-      kolumnaWin = "p1_16_12";
-      kolumnaLose = "l1_16_12";
+      if (table == "tabela_32x") {
+        kolumnaWin = "p1_16_12";
+        kolumnaLose = "l1_16_12";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "Pmain_12";
+        kolumnaLose = "Lmain_23";
+      }
+
       break;
 
     case "main_13":
-      kolumnaWin = "p1_16_13";
-      kolumnaLose = "l1_16_13";
+      if (table == "tabela_32x") {
+        kolumnaWin = "p1_16_13";
+        kolumnaLose = "l1_16_13";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "Pmain_13";
+        kolumnaLose = "Lmain_25";
+      }
+
       break;
 
     case "main_14":
-      kolumnaWin = "p1_16_14";
-      kolumnaLose = "l1_16_14";
+      if (table == "tabela_32x") {
+        kolumnaWin = "p1_16_14";
+        kolumnaLose = "l1_16_14";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "Pmain_14";
+        kolumnaLose = "Lmain_27";
+      }
+
       break;
 
     case "main_15":
-      kolumnaWin = "p1_16_15";
-      kolumnaLose = "l1_16_15";
+      if (table == "tabela_32x") {
+        kolumnaWin = "p1_16_15";
+        kolumnaLose = "l1_16_15";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "Pmain_15";
+        kolumnaLose = "Lmain_29";
+      }
+
       break;
 
     case "main_16":
-      kolumnaWin = "p1_16_16";
-      kolumnaLose = "l1_16_16";
+      if (table == "tabela_32x") {
+        kolumnaWin = "p1_16_16";
+        kolumnaLose = "l1_16_16";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "Pmain_16";
+        kolumnaLose = "Lmain_31";
+      }
+
       break;
     case "L1_16_1":
       kolumnaWin = "l1_16_c1";
@@ -1618,6 +2378,9 @@ async function updateTable(box_id, group, date, table, winnerId, loserId) {
       if (table == "tabela_24x") {
         kolumnaWin = "p1_8_1";
         kolumnaLose = "Lmain_8";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "p1_16_1";
+        kolumnaLose = "Lmain_30";
       }
       break;
 
@@ -1625,6 +2388,9 @@ async function updateTable(box_id, group, date, table, winnerId, loserId) {
       if (table == "tabela_24x") {
         kolumnaWin = "p1_8_2";
         kolumnaLose = "Lmain_5";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "p1_16_2";
+        kolumnaLose = "Lmain_26";
       }
       break;
 
@@ -1632,6 +2398,9 @@ async function updateTable(box_id, group, date, table, winnerId, loserId) {
       if (table == "tabela_24x") {
         kolumnaWin = "p1_8_3";
         kolumnaLose = "Lmain_4";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "p1_16_3";
+        kolumnaLose = "Lmain_22";
       }
       break;
 
@@ -1639,6 +2408,9 @@ async function updateTable(box_id, group, date, table, winnerId, loserId) {
       if (table == "tabela_24x") {
         kolumnaWin = "p1_8_4";
         kolumnaLose = "Lmain_1";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "p1_16_4";
+        kolumnaLose = "Lmain_18";
       }
       break;
 
@@ -1646,6 +2418,9 @@ async function updateTable(box_id, group, date, table, winnerId, loserId) {
       if (table == "tabela_24x") {
         kolumnaWin = "p1_8_5";
         kolumnaLose = "Lmain_16";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "p1_16_5";
+        kolumnaLose = "Lmain_14";
       }
       break;
 
@@ -1653,6 +2428,9 @@ async function updateTable(box_id, group, date, table, winnerId, loserId) {
       if (table == "tabela_24x") {
         kolumnaWin = "p1_8_6";
         kolumnaLose = "Lmain_13";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "p1_16_6";
+        kolumnaLose = "Lmain_10";
       }
       break;
 
@@ -1660,6 +2438,9 @@ async function updateTable(box_id, group, date, table, winnerId, loserId) {
       if (table == "tabela_24x") {
         kolumnaWin = "p1_8_7";
         kolumnaLose = "Lmain_12";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "p1_16_7";
+        kolumnaLose = "Lmain_6";
       }
       break;
 
@@ -1667,55 +2448,212 @@ async function updateTable(box_id, group, date, table, winnerId, loserId) {
       if (table == "tabela_24x") {
         kolumnaWin = "p1_8_8";
         kolumnaLose = "Lmain_9";
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "p1_16_8";
+        kolumnaLose = "Lmain_2";
       }
       break;
+
+    case "Pmain_9":
+      if (table == "tabela_48x") {
+        kolumnaWin = "p1_16_9";
+        kolumnaLose = "Lmain_32";
+      }
+      break;
+
+    case "Pmain_10":
+      if (table == "tabela_48x") {
+        kolumnaWin = "p1_16_10";
+        kolumnaLose = "Lmain_28";
+      }
+      break;
+
+    case "Pmain_11":
+      if (table == "tabela_48x") {
+        kolumnaWin = "p1_16_11";
+        kolumnaLose = "Lmain_24";
+      }
+      break;
+
+    case "Pmain_12":
+      if (table == "tabela_48x") {
+        kolumnaWin = "p1_16_12";
+        kolumnaLose = "Lmain_20";
+      }
+      break;
+
+    case "Pmain_13":
+      if (table == "tabela_48x") {
+        kolumnaWin = "p1_16_13";
+        kolumnaLose = "Lmain_16";
+      }
+      break;
+
+    case "Pmain_14":
+      if (table == "tabela_48x") {
+        kolumnaWin = "p1_16_14";
+        kolumnaLose = "Lmain_12";
+      }
+      break;
+
+    case "Pmain_15":
+      if (table == "tabela_48x") {
+        kolumnaWin = "p1_16_15";
+        kolumnaLose = "Lmain_8";
+      }
+      break;
+
+    case "Pmain_16":
+      if (table == "tabela_48x") {
+        kolumnaWin = "p1_16_16";
+        kolumnaLose = "Lmain_4";
+      }
+      break;
+
     case "Lmain_1":
     case "L1_16_c_1":
-      kolumnaWin = "l1_8_1";
-      kolumnaLose = "17_24_1";
+      if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_1";
+        kolumnaLose = "33_48_1";
+      } else {
+        kolumnaWin = "l1_8_1";
+        kolumnaLose = "17_24_1";
+      }
       break;
 
     case "Lmain_2":
     case "L1_16_c_2":
-      kolumnaWin = "l1_8_2";
-      kolumnaLose = "17_24_2";
+      if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_2";
+        kolumnaLose = "33_48_3";
+      } else {
+        kolumnaWin = "l1_8_2";
+        kolumnaLose = "17_24_2";
+      }
       break;
 
     case "Lmain_3":
     case "L1_16_c_3":
-      kolumnaWin = "l1_8_3";
-      kolumnaLose = "17_24_3";
+      if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_3";
+        kolumnaLose = "33_48_5";
+      } else {
+        kolumnaWin = "l1_8_3";
+        kolumnaLose = "17_24_3";
+      }
       break;
 
     case "Lmain_4":
     case "L1_16_c_4":
-      kolumnaWin = "l1_8_4";
-      kolumnaLose = "17_24_4";
+      if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_4";
+        kolumnaLose = "33_48_7";
+      } else {
+        kolumnaWin = "l1_8_4";
+        kolumnaLose = "17_24_4";
+      }
       break;
 
     case "Lmain_5":
     case "L1_16_c_5":
-      kolumnaWin = "l1_8_5";
-      kolumnaLose = "17_24_5";
+      if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_5";
+        kolumnaLose = "33_48_9";
+      } else {
+        kolumnaWin = "l1_8_5";
+        kolumnaLose = "17_24_5";
+      }
       break;
 
     case "Lmain_6":
     case "L1_16_c_6":
-      kolumnaWin = "l1_8_6";
-      kolumnaLose = "17_24_6";
+      if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_6";
+        kolumnaLose = "33_48_11";
+      } else {
+        kolumnaWin = "l1_8_6";
+        kolumnaLose = "17_24_6";
+      }
       break;
 
     case "Lmain_7":
     case "L1_16_c_7":
-      kolumnaWin = "l1_8_7";
-      kolumnaLose = "17_24_7";
+      if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_7";
+        kolumnaLose = "33_48_13";
+      } else {
+        kolumnaWin = "l1_8_7";
+        kolumnaLose = "17_24_7";
+      }
       break;
 
     case "Lmain_8":
     case "L1_16_c_8":
-      kolumnaWin = "l1_8_8";
-      kolumnaLose = "17_24_8";
+      if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_8";
+        kolumnaLose = "33_48_15";
+      } else {
+        kolumnaWin = "l1_8_8";
+        kolumnaLose = "17_24_8";
+      }
       break;
+
+    case "Lmain_9":
+      if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_9";
+        kolumnaLose = "33_48_2";
+      }
+      break;
+
+    case "Lmain_10":
+      if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_10";
+        kolumnaLose = "33_48_4";
+      }
+      break;
+
+    case "Lmain_11":
+      if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_11";
+        kolumnaLose = "33_48_6";
+      }
+      break;
+
+    case "Lmain_12":
+      if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_12";
+        kolumnaLose = "33_48_8";
+      }
+      break;
+
+    case "Lmain_13":
+      if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_13";
+        kolumnaLose = "33_48_10";
+      }
+      break;
+
+    case "Lmain_14":
+      if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_14";
+        kolumnaLose = "33_48_12";
+      }
+      break;
+
+    case "Lmain_15":
+      if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_15";
+        kolumnaLose = "33_48_14";
+      }
+      break;
+
+    case "Lmain_16":
+      if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_16";
+        kolumnaLose = "33_48_16";
+      }
+      break;
+
     case "P1_4_1":
       kolumnaWin = "p1_2_1";
       if (table == "tabela_8x" || table == "tabela_32x") {
@@ -1927,6 +2865,135 @@ async function updateTable(box_id, group, date, table, winnerId, loserId) {
       kolumnaLose = "31_32_2";
       break;
 
+    case "33_48_1":
+      kolumnaWin = "33_40_1";
+      kolumnaLose = "41_48_1";
+      break;
+    case "33_48_2":
+      kolumnaWin = "33_40_3";
+      kolumnaLose = "41_48_3";
+      break;
+    case "33_48_3":
+      kolumnaWin = "33_40_5";
+      kolumnaLose = "41_48_5";
+      break;
+    case "33_48_4":
+      kolumnaWin = "33_40_7";
+      kolumnaLose = "41_48_7";
+      break;
+    case "33_48_5":
+      kolumnaWin = "33_40_2";
+      kolumnaLose = "41_48_2";
+      break;
+    case "33_48_6":
+      kolumnaWin = "33_40_4";
+      kolumnaLose = "41_48_4";
+      break;
+    case "33_48_7":
+      kolumnaWin = "33_40_6";
+      kolumnaLose = "41_48_6";
+      break;
+    case "33_48_8":
+      kolumnaWin = "33_40_8";
+      kolumnaLose = "41_48_8";
+      break;
+    case "41_48_1":
+      kolumnaWin = "41_44_1";
+      kolumnaLose = "45_48_1";
+      break;
+    case "41_48_2":
+      kolumnaWin = "41_44_3";
+      kolumnaLose = "45_48_3";
+      break;
+    case "41_48_3":
+      kolumnaWin = "41_44_2";
+      kolumnaLose = "45_48_2";
+      break;
+    case "41_48_4":
+      kolumnaWin = "41_44_4";
+      kolumnaLose = "45_48_4";
+      break;
+    case "33_40_1":
+      kolumnaWin = "33_36_1";
+      kolumnaLose = "37_40_1";
+      break;
+    case "33_40_2":
+      kolumnaWin = "33_36_3";
+      kolumnaLose = "37_40_3";
+      break;
+    case "33_40_3":
+      kolumnaWin = "33_36_2";
+      kolumnaLose = "37_40_2";
+      break;
+    case "33_40_4":
+      kolumnaWin = "33_36_4";
+      kolumnaLose = "37_40_4";
+      break;
+    case "33_36_1":
+      kolumnaWin = "33_34_1";
+      kolumnaLose = "35_36_1";
+      break;
+    case "33_36_2":
+      kolumnaWin = "33_34_2";
+      kolumnaLose = "35_36_2";
+      break;
+    case "37_40_1":
+      kolumnaWin = "37_38_1";
+      kolumnaLose = "39_40_1";
+      break;
+    case "37_40_2":
+      kolumnaWin = "37_38_2";
+      kolumnaLose = "39_40_2";
+      break;
+    case "41_44_1":
+      kolumnaWin = "41_42_1";
+      kolumnaLose = "43_44_1";
+      break;
+    case "41_44_2":
+      kolumnaWin = "41_42_2";
+      kolumnaLose = "43_44_2";
+      break;
+    case "45_48_1":
+      kolumnaWin = "45_46_1";
+      kolumnaLose = "47_48_1";
+      break;
+    case "45_48_2":
+      kolumnaWin = "45_46_2";
+      kolumnaLose = "47_48_2";
+      break;
+    case "33_34":
+      kolumnaWin = "33";
+      kolumnaLose = "34";
+      break;
+    case "35_36":
+      kolumnaWin = "35";
+      kolumnaLose = "36";
+      break;
+    case "37_38":
+      kolumnaWin = "37";
+      kolumnaLose = "38";
+      break;
+    case "39_40":
+      kolumnaWin = "39";
+      kolumnaLose = "40";
+      break;
+    case "41_42":
+      kolumnaWin = "41";
+      kolumnaLose = "42";
+      break;
+    case "43_44":
+      kolumnaWin = "43";
+      kolumnaLose = "44";
+      break;
+    case "45_46":
+      kolumnaWin = "45";
+      kolumnaLose = "46";
+      break;
+    case "47_48":
+      kolumnaWin = "47";
+      kolumnaLose = "48";
+      break;
+    
     case "25_26":
       kolumnaWin = "25";
       kolumnaLose = "26";

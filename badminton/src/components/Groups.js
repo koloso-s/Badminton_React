@@ -10,7 +10,7 @@ const Groups = () => {
   const [availablePlayers, setAvailablePlayers] = useState([]);
 
   const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0],
+    new Date().toLocaleDateString("sv-SE")
   );
 
   const [firstName, setFirstName] = useState("");
@@ -230,7 +230,10 @@ const Groups = () => {
                 players.length === 24 ||
                 players.length === 32 ||
                 players.length === 33 ||
-                players.length === 34
+                players.length === 34 ||
+                players.length === 42 ||
+                players.length === 43 ||
+                players.length === 44
                 ? "osoby"
                 : "osób"}
             )
@@ -248,6 +251,7 @@ const Groups = () => {
               onChange={(e) => handleInputChange(e, "fname")}
               onFocus={() => setShowSuggestions(true)}
               className="player-input"
+              disabled={players.length >= 48 ? true : false}
             />
 
             <input
@@ -257,6 +261,7 @@ const Groups = () => {
               onChange={(e) => handleInputChange(e, "lname")}
               onFocus={() => setShowSuggestions(true)}
               className="player-input"
+              disabled={players.length >= 48 ? true : false}
             />
 
             {showSuggestions && suggestions.length > 0 && (

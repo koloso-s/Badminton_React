@@ -212,6 +212,50 @@ const Tournament = ({ show }) => {
           "1_2",
         ]);
         break;
+      case "tabela_48x":
+        setColumns([
+          "L1_2_c",
+          "L1_2",
+          "L1_4_c",
+          "L1_4",
+          "L1_8_c",
+          "L1_8",
+          "L1_16_c",
+          "L1_16",
+          "Lmain",
+          "main",
+          "Pmain",
+          "P1_16",
+          "P1_8",
+          "P1_4",
+          "P1_2",
+        ]);
+        setColumnsBottom([
+          "33_48",
+
+          "41_48",
+          "33_40",
+
+          "45_48",
+          "41_44",
+          "37_40",
+          "33_36",
+
+          "25_32",
+          "29_32",
+          "25_28",
+          "17_24",
+          "21_24",
+          "17_20",
+          "13_16",
+          "9_12",
+          "7_8",
+          "5_6",
+          "4",
+          "3",
+          "1_2",
+        ]);
+        break;
     }
   }, [tournament]);
 
@@ -239,10 +283,12 @@ const Tournament = ({ show }) => {
         return "25 - 32";
       case "main":
         return "main";
-      case "Pmain":
-        return "1 / 16";
-      case "Lmain":
-        return "17 - 24";
+      case "Pmain": {
+        return tournament.tabela === "tabela_24x" ? "1 / 16" : "1 / 32";
+      }
+      case "Lmain": {
+        return tournament.tabela === "tabela_24x" ? "17 - 24" : "33 - 48";
+      }
       case "P1_16":
         return "1 / 16";
       case "P1_8":
@@ -374,6 +420,10 @@ const Tournament = ({ show }) => {
 
   const renderColumnMatchesFour = (column) => {
     const columnLayouts = {
+      "45_48": ["45_46", "match", "47_48"],
+      "41_44": ["41_42", "match", "43_44"],
+      "37_40": ["37_38", "match", "39_40"],
+      "33_36": ["33_34", "match", "35_36"],
       "25_28": ["25_26", "match", "27_28"],
       "29_32": ["29_30", "match", "31_32"],
       "17_20": ["17_18", "match", "19_20"],
@@ -505,6 +555,15 @@ const Tournament = ({ show }) => {
 
   const renderColumnMatchesBottom = (column) => {
     const columnLayouts = {
+      "33_48": ["match"],
+      "41_48": ["match"],
+      "33_40": ["match"],
+
+      "45_48": [[45, 46], "match", [47, 48]],
+      "41_44": [[41, 42], "match", [43, 44]],
+      "37_40": [[37, 38], "match", [39, 40]],
+      "33_36": [[33, 34], "match", [35, 36]],
+
       "25_32": ["match"],
       "29_32": [[29, 30], "match", [31, 32]],
       "25_28": [[25, 26], "match", [27, 28]],
@@ -536,10 +595,15 @@ const Tournament = ({ show }) => {
               column === "17_20" ||
               column === "21_24" ||
               column === "29_32" ||
-              column === "25_28"
+              column === "25_28" ||
+              column === "33_36" ||
+              column === "37_40" ||
+              column === "41_44" ||
+              column === "45_48"
+
             )
               return renderColumnMatchesFour(column);
-            if (column === "17_24" || column === "25_32")
+            if (column === "17_24" || column === "25_32" || column === "41_48" || column === "33_40" || column === "33_48")
               return renderColumnMatchesEight(column);
           }
 
