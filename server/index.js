@@ -2511,91 +2511,107 @@ async function updateTable(box_id, group, date, table, winnerId, loserId) {
       break;
 
     case "Lmain_1":
-    case "L1_16_c_1":
-      if (table == "tabela_48x") {
-        kolumnaWin = "l1_16_1";
-        kolumnaLose = "33_48_1";
-      } else {
+      if (table == "tabela_24x") {
         kolumnaWin = "l1_8_1";
         kolumnaLose = "17_24_1";
-      }
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_1";
+        kolumnaLose = "33_48_1";
+      } break;
+    case "L1_16_c_1":
+      kolumnaWin = "l1_8_1";
+      kolumnaLose = "17_24_1";
       break;
 
     case "Lmain_2":
-    case "L1_16_c_2":
-      if (table == "tabela_48x") {
-        kolumnaWin = "l1_16_2";
-        kolumnaLose = "33_48_3";
-      } else {
+      if (table == "tabela_24x") {
         kolumnaWin = "l1_8_2";
         kolumnaLose = "17_24_2";
-      }
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_2";
+        kolumnaLose = "33_48_3";
+      } break;
+    case "L1_16_c_2":
+      kolumnaWin = "l1_8_2";
+      kolumnaLose = "17_24_2";
       break;
 
     case "Lmain_3":
-    case "L1_16_c_3":
-      if (table == "tabela_48x") {
-        kolumnaWin = "l1_16_3";
-        kolumnaLose = "33_48_5";
-      } else {
+      if (table == "tabela_24x") {
         kolumnaWin = "l1_8_3";
         kolumnaLose = "17_24_3";
-      }
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_3";
+        kolumnaLose = "33_48_5";
+      } break;
+    case "L1_16_c_3":
+      kolumnaWin = "l1_8_3";
+      kolumnaLose = "17_24_3";
       break;
 
     case "Lmain_4":
-    case "L1_16_c_4":
-      if (table == "tabela_48x") {
-        kolumnaWin = "l1_16_4";
-        kolumnaLose = "33_48_7";
-      } else {
+      if (table == "tabela_24x") {
         kolumnaWin = "l1_8_4";
         kolumnaLose = "17_24_4";
-      }
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_4";
+        kolumnaLose = "33_48_7";
+      } break;
+    case "L1_16_c_4":
+      kolumnaWin = "l1_8_4";
+      kolumnaLose = "17_24_4";
       break;
 
     case "Lmain_5":
-    case "L1_16_c_5":
-      if (table == "tabela_48x") {
-        kolumnaWin = "l1_16_5";
-        kolumnaLose = "33_48_9";
-      } else {
+      if (table == "tabela_24x") {
         kolumnaWin = "l1_8_5";
         kolumnaLose = "17_24_5";
-      }
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_5";
+        kolumnaLose = "33_48_9";
+      } break;
+    case "L1_16_c_5":
+      kolumnaWin = "l1_8_5";
+      kolumnaLose = "17_24_5";
       break;
 
     case "Lmain_6":
-    case "L1_16_c_6":
-      if (table == "tabela_48x") {
-        kolumnaWin = "l1_16_6";
-        kolumnaLose = "33_48_11";
-      } else {
+      if (table == "tabela_24x") {
         kolumnaWin = "l1_8_6";
         kolumnaLose = "17_24_6";
-      }
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_6";
+        kolumnaLose = "33_48_11";
+      } break;
+    case "L1_16_c_6":
+      kolumnaWin = "l1_8_6";
+      kolumnaLose = "17_24_6";
       break;
 
     case "Lmain_7":
-    case "L1_16_c_7":
-      if (table == "tabela_48x") {
-        kolumnaWin = "l1_16_7";
-        kolumnaLose = "33_48_13";
-      } else {
+      if (table == "tabela_24x") {
         kolumnaWin = "l1_8_7";
         kolumnaLose = "17_24_7";
-      }
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_7";
+        kolumnaLose = "33_48_13";
+      } break;
+    case "L1_16_c_7":
+      kolumnaWin = "l1_8_7";
+      kolumnaLose = "17_24_7";
       break;
 
     case "Lmain_8":
-    case "L1_16_c_8":
-      if (table == "tabela_48x") {
-        kolumnaWin = "l1_16_8";
-        kolumnaLose = "33_48_15";
-      } else {
+      if (table == "tabela_24x") {
         kolumnaWin = "l1_8_8";
         kolumnaLose = "17_24_8";
-      }
+      } else if (table == "tabela_48x") {
+        kolumnaWin = "l1_16_8";
+        kolumnaLose = "33_48_15";
+      } break;
+    case "L1_16_c_8":
+      kolumnaWin = "l1_8_8";
+      kolumnaLose = "17_24_8";
       break;
 
     case "Lmain_9":
@@ -2993,7 +3009,7 @@ async function updateTable(box_id, group, date, table, winnerId, loserId) {
       kolumnaWin = "47";
       kolumnaLose = "48";
       break;
-    
+
     case "25_26":
       kolumnaWin = "25";
       kolumnaLose = "26";
@@ -3232,6 +3248,10 @@ app.get("/api/results/:group", async (req, res) => {
 
         case "tabela_32x":
           maxPositions = 32;
+          break;
+
+        case "tabela_48x":
+          maxPositions = 48;
           break;
 
         default:
