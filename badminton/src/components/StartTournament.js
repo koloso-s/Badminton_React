@@ -11,6 +11,7 @@ const StartTournament = () => {
             <h1>Rozpocznij Turniej</h1>
             <div className="groups">
                 <Link to="/group/podstawowa">Grupa Podstawowa</Link>
+                <Link to="/group/średniozaawansowana">Grupa Średniozaawansowana</Link>
                 <Link to="/group/zaawansowana">Grupa Zaawansowana</Link>
             </div>
             <Link to="/tournament" className="start-tournament-button" onClick={startTournament}>Rozpocznij nowy turniej</Link>

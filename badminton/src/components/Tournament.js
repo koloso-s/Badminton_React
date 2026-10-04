@@ -656,6 +656,9 @@ const Tournament = ({ show }) => {
           <button onClick={() => setGroup("podstawowa")} className={group === "podstawowa" ? "btn-select" : ""}>
             Grupa Podstawowa
           </button>
+          <button onClick={() => setGroup("średniozaawansowana")} className={group === "średniozaawansowana" ? "btn-select" : ""}>
+            Grupa Średniozaawansowana
+          </button>
           <button onClick={() => setGroup("zaawansowana")} className={group === "zaawansowana" ? "btn-select" : ""}>
             Grupa Zaawansowana
           </button>

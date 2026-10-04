@@ -2,16 +2,15 @@ import axios from "axios";
 import { useState, useEffect, Fragment } from "react";
 import "../styles/Results.css";
 import { Link } from "react-router-dom";
-
 const Results = () => {
   const [group, setGroup] = useState("podstawowa");
-
   const [resultsPodstawowa, setResultsPodstawowa] = useState({});
+  const [resultsSredniozaawansowana, setResultsSredniozaawansowana] = useState({});
   const [resultsZaawansowana, setResultsZaawansowana] = useState({});
-
   const [playersPodstawowa, setPlayersPodstawowa] = useState([]);
+  const [playersSredniozaawansowana, setPlayersSredniozaawansowana] = useState([]);
   const [playersZaawansowana, setPlayersZaawansowana] = useState([]);
-
+  const MIGRATION_DATE = "2026-10-04";
   const punkty = {
     1: 100,
     2: 94,
@@ -62,42 +61,39 @@ const Results = () => {
     47: 1,
     48: 1,
   };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [
           podstawowaResults,
+          sredniozaawansowanaResults,
           zaawansowanaResults,
           podstawowaPlayers,
+          sredniozaawansowanaPlayers,
           zaawansowanaPlayers,
         ] = await Promise.all([
-          axios.get(
-            "http://localhost:5000/api/results/podstawowa"
-          ),
-          axios.get(
-            "http://localhost:5000/api/results/zaawansowana"
-          ),
-          axios.get(
-            "http://localhost:5000/api/players/podstawowa"
-          ),
-          axios.get(
-            "http://localhost:5000/api/players/zaawansowana"
-          ),
+          axios.get("http://localhost:5000/api/results/podstawowa"),
+          axios.get("http://localhost:5000/api/results/średniozaawansowana"),
+          axios.get("http://localhost:5000/api/results/zaawansowana"),
+          axios.get("http://localhost:5000/api/players/podstawowa"),
+          axios.get("http://localhost:5000/api/players/średniozaawansowana"),
+          axios.get("http://localhost:5000/api/players/zaawansowana"),
         ]);
-
         setResultsPodstawowa(
           podstawowaResults.data || {}
         );
-
+        setResultsSredniozaawansowana(
+          sredniozaawansowanaResults.data || {}
+        );
         setResultsZaawansowana(
           zaawansowanaResults.data || {}
         );
-
         setPlayersPodstawowa(
           podstawowaPlayers.data || []
         );
-
+        setPlayersSredniozaawansowana(
+          sredniozaawansowanaPlayers.data || []
+        );
         setPlayersZaawansowana(
           zaawansowanaPlayers.data || []
         );
@@ -108,76 +104,72 @@ const Results = () => {
         );
       }
     };
-
     fetchData();
   }, []);
-
   const normalizeGroup = (value) => {
     const normalized = String(value || "")
       .trim()
       .toLowerCase();
-
     if (
       normalized === "podstawowa" ||
+      normalized === "średniozaawansowana" ||
       normalized === "zaawansowana"
     ) {
       return normalized;
     }
-
     return null;
   };
-
   const getDateOnly = (date) => {
     if (!date) {
       return null;
     }
-
     return String(date).substring(0, 10);
   };
-
+  const getGroupLabel = (playerGroup) => {
+    if (playerGroup === "podstawowa") {
+      return "Podstawowa";
+    }
+    if (playerGroup === "średniozaawansowana") {
+      return "Średniozaawansowana";
+    }
+    if (playerGroup === "zaawansowana") {
+      return "Zaawansowana";
+    }
+    return "";
+  };
   const allPlayersMap = new Map();
-
   const addPlayersToMap = (
     list,
     sourceGroup
   ) => {
     list.forEach((player) => {
       const playerId = Number(player.id);
-
       if (!Number.isFinite(playerId)) {
         return;
       }
-
       const normalizedPlayer = {
         ...player,
-
         grupa:
           normalizeGroup(player.grupa) ||
           sourceGroup,
       };
-
       const existing =
         allPlayersMap.get(playerId);
-
       if (!existing) {
         allPlayersMap.set(
           playerId,
           normalizedPlayer
         );
-
         return;
       }
-
       const existingChangeDate =
         getDateOnly(
           existing.group_change_date
         );
-
       const newChangeDate =
         getDateOnly(
           normalizedPlayer.group_change_date
         );
-
       if (
         newChangeDate &&
         !existingChangeDate
@@ -186,10 +178,8 @@ const Results = () => {
           playerId,
           normalizedPlayer
         );
-
         return;
       }
-
       if (
         newChangeDate &&
         existingChangeDate &&
@@ -202,135 +192,233 @@ const Results = () => {
       }
     });
   };
-
   addPlayersToMap(
     playersPodstawowa,
     "podstawowa"
   );
-
+  addPlayersToMap(
+    playersSredniozaawansowana,
+    "średniozaawansowana"
+  );
   addPlayersToMap(
     playersZaawansowana,
     "zaawansowana"
   );
-
   const playersData = Array.from(
     allPlayersMap.values()
   ).filter(
     (player) =>
       normalizeGroup(player.grupa) === group
   );
-
   const dates = Array.from(
     new Set([
       ...Object.keys(resultsPodstawowa),
+      ...Object.keys(resultsSredniozaawansowana),
       ...Object.keys(resultsZaawansowana),
     ])
   )
     .map(getDateOnly)
     .filter(Boolean)
     .sort();
-
+  const getLegacyPreviousGroup = (
+    currentGroup
+  ) => {
+    if (currentGroup === "zaawansowana") {
+      return "podstawowa";
+    }
+    if (currentGroup === "podstawowa") {
+      return "zaawansowana";
+    }
+    return null;
+  };
+  const getPlayerTransitions = (player) => {
+    const transitions = [];
+    const currentGroup =
+      normalizeGroup(player.grupa);
+    const migrationPreviousGroup =
+      normalizeGroup(
+        player.zmiana_2_turniej
+      );
+    const normalChangeDate =
+      getDateOnly(
+        player.group_change_date
+      );
+    const normalChangeFrom =
+      normalizeGroup(
+        player.group_change_from
+      );
+    if (migrationPreviousGroup) {
+      let migrationTarget =
+        currentGroup;
+      if (
+        normalChangeDate &&
+        normalChangeDate > MIGRATION_DATE &&
+        normalChangeFrom
+      ) {
+        migrationTarget =
+          normalChangeFrom;
+      }
+      if (
+        migrationTarget &&
+        migrationPreviousGroup !==
+        migrationTarget
+      ) {
+        transitions.push({
+          date: MIGRATION_DATE,
+          from: migrationPreviousGroup,
+          to: migrationTarget,
+        });
+      }
+    }
+    if (normalChangeDate) {
+      let afterGroup =
+        currentGroup;
+      if (
+        migrationPreviousGroup &&
+        normalChangeDate < MIGRATION_DATE
+      ) {
+        afterGroup =
+          migrationPreviousGroup;
+      }
+      let beforeGroup =
+        normalChangeFrom;
+      if (!beforeGroup) {
+        beforeGroup =
+          getLegacyPreviousGroup(
+            afterGroup
+          );
+      }
+      if (
+        beforeGroup &&
+        afterGroup &&
+        beforeGroup !== afterGroup
+      ) {
+        transitions.push({
+          date: normalChangeDate,
+          from: beforeGroup,
+          to: afterGroup,
+        });
+      }
+    }
+    return transitions.sort(
+      (a, b) =>
+        a.date.localeCompare(b.date)
+    );
+  };
   const hasChangedGroup = (player) => {
     return Boolean(
       player.group_change_date
     );
   };
-
-  const getPreviousGroup = (
-    currentGroup
-  ) => {
-    if (currentGroup === "podstawowa") {
-      return "zaawansowana";
-    }
-
-    if (currentGroup === "zaawansowana") {
-      return "podstawowa";
-    }
-
-    return null;
-  };
-
   const getPlayerGroupForDate = (
     player,
     date
   ) => {
-    const currentGroup =
-      normalizeGroup(player.grupa);
-
-    if (!currentGroup) {
-      return null;
-    }
-
-    if (!hasChangedGroup(player)) {
-      return currentGroup;
-    }
-
     const tournamentDate =
       getDateOnly(date);
-
-    const changeDate =
-      getDateOnly(
-        player.group_change_date
-      );
-
+    let playerGroup =
+      normalizeGroup(player.grupa);
     if (
       !tournamentDate ||
-      !changeDate
+      !playerGroup
     ) {
-      return currentGroup;
+      return playerGroup;
     }
-
-    if (tournamentDate < changeDate) {
-      return getPreviousGroup(
-        currentGroup
+    const transitions =
+      getPlayerTransitions(player);
+    const reversedTransitions =
+      [...transitions].sort(
+        (a, b) =>
+          b.date.localeCompare(a.date)
       );
-    }
-
-    return currentGroup;
-  };
-
-  const movedFromBasicToAdvanced = (
-    player
-  ) => {
-    const currentGroup =
-      normalizeGroup(player.grupa);
-
-    return (
-      hasChangedGroup(player) &&
-      currentGroup === "zaawansowana"
+    reversedTransitions.forEach(
+      (transition) => {
+        if (
+          tournamentDate <
+          transition.date
+        ) {
+          playerGroup =
+            transition.from;
+        }
+      }
     );
+    return playerGroup;
   };
-
-  const shouldHalvePoints = (
+  const getTransitionMultiplier = (
+    fromGroup,
+    toGroup
+  ) => {
+    if (
+      fromGroup === "podstawowa" &&
+      toGroup ===
+      "średniozaawansowana"
+    ) {
+      return 0.7;
+    }
+    if (
+      fromGroup ===
+      "średniozaawansowana" &&
+      toGroup === "zaawansowana"
+    ) {
+      return 0.7;
+    }
+    if (
+      fromGroup === "podstawowa" &&
+      toGroup === "zaawansowana"
+    ) {
+      return 0.5;
+    }
+    return 1;
+  };
+  const getPointsMultiplier = (
     player,
     date
   ) => {
-    if (
-      !movedFromBasicToAdvanced(
-        player
-      )
-    ) {
-      return false;
-    }
-
     const tournamentDate =
       getDateOnly(date);
-
-    const changeDate =
-      getDateOnly(
-        player.group_change_date
-      );
-
-    if (
-      !tournamentDate ||
-      !changeDate
-    ) {
-      return false;
+    if (!tournamentDate) {
+      return 1;
     }
-
-    return tournamentDate < changeDate;
+    const transitions =
+      getPlayerTransitions(player);
+    let multiplier = 1;
+    transitions.forEach(
+      (transition) => {
+        if (
+          tournamentDate <
+          transition.date
+        ) {
+          multiplier *=
+            getTransitionMultiplier(
+              transition.from,
+              transition.to
+            );
+        }
+      }
+    );
+    return multiplier;
   };
-
+  const getResultsByGroup = (
+    playerGroup
+  ) => {
+    if (
+      playerGroup === "podstawowa"
+    ) {
+      return resultsPodstawowa;
+    }
+    if (
+      playerGroup ===
+      "średniozaawansowana"
+    ) {
+      return resultsSredniozaawansowana;
+    }
+    if (
+      playerGroup === "zaawansowana"
+    ) {
+      return resultsZaawansowana;
+    }
+    return {};
+  };
   const getResultsForDate = (
     playerGroup,
     date
@@ -338,19 +426,15 @@ const Results = () => {
     if (!playerGroup) {
       return [];
     }
-
     const dateKey =
       getDateOnly(date);
-
     if (!dateKey) {
       return [];
     }
-
     const results =
-      playerGroup === "podstawowa"
-        ? resultsPodstawowa
-        : resultsZaawansowana;
-
+      getResultsByGroup(
+        playerGroup
+      );
     if (
       Array.isArray(
         results[dateKey]
@@ -358,14 +442,12 @@ const Results = () => {
     ) {
       return results[dateKey];
     }
-
     const matchingKey =
       Object.keys(results).find(
         (key) =>
           getDateOnly(key) ===
           dateKey
       );
-
     if (
       matchingKey &&
       Array.isArray(
@@ -376,10 +458,8 @@ const Results = () => {
         matchingKey
       ];
     }
-
     return [];
   };
-
   const hasTournamentForGroup = (
     playerGroup,
     date
@@ -387,26 +467,21 @@ const Results = () => {
     if (!playerGroup) {
       return false;
     }
-
     const dateKey =
       getDateOnly(date);
-
     if (!dateKey) {
       return false;
     }
-
     const results =
-      playerGroup === "podstawowa"
-        ? resultsPodstawowa
-        : resultsZaawansowana;
-
+      getResultsByGroup(
+        playerGroup
+      );
     return Object.keys(results).some(
       (key) =>
         getDateOnly(key) ===
         dateKey
     );
   };
-
   const getResultFromGroup = (
     playerId,
     date,
@@ -417,10 +492,8 @@ const Results = () => {
         playerGroup,
         date
       );
-
     const numericPlayerId =
       Number(playerId);
-
     if (
       !Number.isFinite(
         numericPlayerId
@@ -428,14 +501,12 @@ const Results = () => {
     ) {
       return null;
     }
-
     return (
       resultList.find((item) => {
         const resultPlayerId =
           item.zawodnik_id ??
           item.player_id ??
           item.id;
-
         if (
           resultPlayerId === null ||
           resultPlayerId === undefined ||
@@ -443,7 +514,6 @@ const Results = () => {
         ) {
           return false;
         }
-
         return (
           Number(resultPlayerId) ===
           numericPlayerId
@@ -451,7 +521,6 @@ const Results = () => {
       }) || null
     );
   };
-
   const getPoints = (
     player,
     miejsce,
@@ -459,116 +528,110 @@ const Results = () => {
   ) => {
     const place =
       Number(miejsce);
-
     if (!Number.isFinite(place)) {
       return 0;
     }
-
     const normalPoints =
       punkty[place] || 0;
-
-    if (
-      shouldHalvePoints(
+    const multiplier =
+      getPointsMultiplier(
         player,
         date
-      )
-    ) {
-
-      return Math.ceil(
-        normalPoints / 2
       );
-    }
-
-    return normalPoints;
+    return Math.ceil(
+      normalPoints * multiplier
+    );
   };
-
+  const getChangeDescription = (
+    player
+  ) => {
+    const transitions =
+      getPlayerTransitions(player);
+    if (transitions.length === 0) {
+      return "";
+    }
+    return transitions
+      .map(
+        (transition) =>
+          `${getGroupLabel(
+            transition.from
+          )} → ${getGroupLabel(
+            transition.to
+          )} od ${transition.date}`
+      )
+      .join(" | ");
+  };
   const players = playersData
     .map((player) => {
       const playerResults = {};
-
       const tournamentResults = [];
-
       dates.forEach((date) => {
         const playerGroup =
           getPlayerGroupForDate(
             player,
             date
           );
-
         if (!playerGroup) {
           return;
         }
-
         const tournamentExists =
           hasTournamentForGroup(
             playerGroup,
             date
           );
-
         if (!tournamentExists) {
           return;
         }
-
         const result =
           getResultFromGroup(
             player.id,
             date,
             playerGroup
           );
-
         if (!result) {
           tournamentResults.push({
             date,
             miejsce: null,
             punkty: 0,
             grupa: playerGroup,
-            halved: false,
+            multiplier: 1,
+            reduced: false,
             absent: true,
           });
-
           return;
         }
-
-        const halved =
-          shouldHalvePoints(
+        const multiplier =
+          getPointsMultiplier(
             player,
             date
           );
-
         const points =
           getPoints(
             player,
             result.miejsce,
             date
           );
-
         tournamentResults.push({
           date,
-
           miejsce:
             Number(
               result.miejsce
             ),
-
           punkty:
             points,
-
           grupa:
             playerGroup,
-
-          halved,
-
+          multiplier,
+          reduced:
+            multiplier < 1,
           absent: false,
         });
       });
-
       let worstTournamentIndex = -1;
-
       if (
         tournamentResults.length >= 2
       ) {
         let lowestPoints = Infinity;
-
         tournamentResults.forEach(
           (tournament, index) => {
             if (
@@ -577,60 +640,48 @@ const Results = () => {
             ) {
               lowestPoints =
                 tournament.punkty;
-
               worstTournamentIndex =
                 index;
             }
           }
         );
       }
-
       let totalPoints = 0;
-
       tournamentResults.forEach(
         (tournament, index) => {
           const excluded =
             index ===
             worstTournamentIndex;
-
           playerResults[
             tournament.date
           ] = {
             miejsce:
               tournament.miejsce,
-
             punkty:
               tournament.punkty,
-
             grupa:
               tournament.grupa,
-
-            halved:
-              tournament.halved,
-
+            multiplier:
+              tournament.multiplier,
+            reduced:
+              tournament.reduced,
             absent:
               tournament.absent,
-
             excluded,
           };
-
           if (!excluded) {
             totalPoints +=
               tournament.punkty;
           }
         }
       );
-
       return {
         ...player,
-
         results:
           playerResults,
-
         totalPoints,
       };
     })
-
     .sort((a, b) => {
       if (
         b.totalPoints !==
@@ -641,27 +692,19 @@ const Results = () => {
           a.totalPoints
         );
       }
-
       return (
         Number(a.id) -
         Number(b.id)
       );
     });
-
   return (
     <div className="results">
-
       <div className="tournament-header">
-
         <h1>
           Grupa{" "}
-          {group === "podstawowa"
-            ? "Podstawowa"
-            : "Zaawansowana"}
+          {getGroupLabel(group)}
         </h1>
-
         <div className="tournament-buttons">
-
           <button
             className={
               group === "podstawowa"
@@ -674,7 +717,21 @@ const Results = () => {
           >
             Grupa Podstawowa
           </button>
-
+          <button
+            className={
+              group ===
+                "średniozaawansowana"
+                ? "active"
+                : ""
+            }
+            onClick={() =>
+              setGroup(
+                "średniozaawansowana"
+              )
+            }
+          >
+            Grupa Średniozaawansowana
+          </button>
           <button
             className={
               group === "zaawansowana"
@@ -687,9 +744,7 @@ const Results = () => {
           >
             Grupa Zaawansowana
           </button>
-
         </div>
-
         <Link
           to="/"
           className="back-link"
@@ -699,38 +754,29 @@ const Results = () => {
         >
           ← Powrót do strony głównej
         </Link>
-
       </div>
-
       <div className="results-table-wrapper">
-
         <table className="results-table">
-
           <thead>
-
             <tr>
-
               <th
                 className="place-column"
                 rowSpan="2"
               >
                 #
               </th>
-
               <th
                 className="player-column"
                 rowSpan="2"
               >
                 Zawodnik
               </th>
-
               <th
                 className="points-column"
                 rowSpan="2"
               >
                 Punkty
               </th>
-
               {dates.map((date) => (
                 <th
                   key={date}
@@ -740,45 +786,28 @@ const Results = () => {
                   {date}
                 </th>
               ))}
-
             </tr>
-
             <tr>
-
               {dates.map((date) => (
                 <Fragment key={date}>
-
                   <th className="place-column">
                     Miejsce
                   </th>
-
                   <th className="points-column">
                     Pkt.
                   </th>
-
                 </Fragment>
               ))}
-
             </tr>
-
           </thead>
-
           <tbody>
-
             {players.length > 0 ? (
-
               players.map(
                 (player, index) => {
                   const changed =
                     hasChangedGroup(
                       player
                     );
-
-                  const currentGroup =
-                    normalizeGroup(
-                      player.grupa
-                    );
-
                   return (
                     <tr
                       key={player.id}
@@ -788,54 +817,39 @@ const Results = () => {
                           : ""
                       }
                     >
-
                       <td className="position">
                         {index + 1}
                       </td>
-
                       <td className="player-name">
-
                         {player.fname}{" "}
                         {player.lname}
-
                         {changed && (
                           <span
                             className="group-change"
                             title={
-                              currentGroup ===
-                                "zaawansowana"
-                                ? `Zmiana: Podstawowa → Zaawansowana od ${getDateOnly(
-                                  player.group_change_date
-                                )}`
-                                : `Zmiana: Zaawansowana → Podstawowa od ${getDateOnly(
-                                  player.group_change_date
-                                )}`
+                              getChangeDescription(
+                                player
+                              )
                             }
                           >
                             {" "}
                             🔄
                           </span>
                         )}
-
                       </td>
-
                       <td className="total-points">
                         {player.totalPoints}
                       </td>
-
                       {dates.map((date) => {
                         const result =
                           player.results[
                           date
                           ];
-
                         return (
                           <Fragment
                             key={date}
                           >
-
                             <td className="place">
-
                               {result ? (
                                 result.absent ? (
                                   <span
@@ -867,9 +881,7 @@ const Results = () => {
                               ) : (
                                 ""
                               )}
-
                             </td>
-
                             <td
                               className="place-points"
                               title={
@@ -877,15 +889,13 @@ const Results = () => {
                                   ? "Nieobecność — 0 punktów"
                                   : result?.excluded
                                     ? "Najgorszy wynik — nie jest liczony do wyniku ogólnego"
-                                    : result?.halved
-                                      ? "50% punktów zdobytych wcześniej w grupie podstawowej"
+                                    : result?.reduced
+                                      ? `Punkty przeliczone × ${result.multiplier}`
                                       : ""
                               }
                             >
-
                               {result ? (
                                 <>
-
                                   <span
                                     style={
                                       result.excluded
@@ -902,16 +912,14 @@ const Results = () => {
                                       result.punkty
                                     }
                                   </span>
-
-                                  {result.halved && (
+                                  {result.reduced && (
                                     <span
                                       className="halved-points"
-                                      title="Punkty podzielone przez 2 i zaokrąglone w górę"
+                                      title={`Punkty przeliczone × ${result.multiplier}`}
                                     >
                                       *
                                     </span>
                                   )}
-
                                   {result.excluded && (
                                     <span
                                       className="excluded-result"
@@ -924,27 +932,20 @@ const Results = () => {
                                       ✕
                                     </span>
                                   )}
-
                                 </>
                               ) : (
                                 ""
                               )}
-
                             </td>
-
                           </Fragment>
                         );
                       })}
-
                     </tr>
                   );
                 }
               )
-
             ) : (
-
               <tr>
-
                 <td
                   colSpan={
                     dates.length * 2 +
@@ -954,43 +955,35 @@ const Results = () => {
                 >
                   Brak wyników
                 </td>
-
               </tr>
-
             )}
-
           </tbody>
-
         </table>
-
       </div>
-
       <div className="results-legend">
-
         <div>
           🔄 Zawodnik zmienił grupę
         </div>
-
         <div>
-          * Podstawowa → Zaawansowana: wcześniejsze punkty z podstawowej są dzielone przez 2 i zaokrąglane w górę
+          * Podstawowa → Średniozaawansowana: wcześniejsze punkty × 70%
         </div>
-
         <div>
-          Zaawansowana → Podstawowa: wszystkie punkty pozostają bez zmian
+          * Średniozaawansowana → Zaawansowana: wcześniejsze punkty × 70%
         </div>
-
+        <div>
+          * Podstawowa → Zaawansowana: wcześniejsze punkty × 50%
+        </div>
+        <div>
+          Zmiana do niższej grupy: wcześniejsze punkty pozostają bez zmian
+        </div>
         <div>
           ✕ Jeden najgorszy wynik nie jest liczony do wyniku ogólnego
         </div>
-
         <div>
           — Nieobecność = 0 punktów, najgorszy wynik
         </div>
-
       </div>
-
     </div>
   );
 };
-
 export default Results;

@@ -38,9 +38,10 @@ app.put("/api/players/:id/change-group", async (req, res) => {
     const { id } = req.params;
     const { newGroup } = req.body;
 
-    const [player] = await db.query("SELECT * FROM zawodnik WHERE id = ?", [
-      id,
-    ]);
+    const [player] = await db.query(
+      "SELECT * FROM zawodnik WHERE id = ?",
+      [id],
+    );
 
     if (player.length === 0) {
       return res.status(404).json({
@@ -48,28 +49,66 @@ app.put("/api/players/:id/change-group", async (req, res) => {
       });
     }
 
-    if (player[0].group_change_date) {
+    const currentPlayer = player[0];
+    const oldGroup = currentPlayer.grupa;
+
+    const today = new Date().toLocaleDateString("sv-SE");
+    const migrationDate = "2026-10-04";
+
+    if (today === migrationDate) {
+      if (newGroup !== "sredniozaawansowana") {
+        return res.status(400).json({
+          error: "On migration day player can only move to sredniozaawansowana",
+        });
+      }
+
+      if (oldGroup === "sredniozaawansowana") {
+        return res.status(400).json({
+          error: "Player is already in sredniozaawansowana",
+        });
+      }
+
+      await db.query(
+        `UPDATE zawodnik
+         SET grupa = ?, zmiana_2_turniej = ?
+         WHERE id = ?`,
+        [newGroup, oldGroup, id],
+      );
+
+      return res.json({
+        message: "Group changed successfully",
+        playerId: id,
+        oldGroup,
+        newGroup,
+        migration: true,
+      });
+    }
+
+    if (currentPlayer.group_change_date) {
       return res.status(400).json({
         error: "Player already changed group",
       });
     }
 
     await db.query(
-      `UPDATE zawodnik 
+      `UPDATE zawodnik
        SET grupa = ?, group_change_date = CURDATE()
        WHERE id = ?`,
       [newGroup, id],
     );
 
-    res.json({
+    return res.json({
       message: "Group changed successfully",
       playerId: id,
+      oldGroup,
       newGroup,
-      changeDate: new Date(),
+      changeDate: today,
+      migration: false,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({
+
+    return res.status(500).json({
       error: "Database error",
     });
   }
@@ -160,7 +199,7 @@ app.post("/api/tournament/start", async (req, res) => {
       [new Date().toLocaleDateString("sv-SE")],
     );
     if (parseInt(tabele[0].count) === 0) {
-      const grupy = ["podstawowa", "zaawansowana"];
+      const grupy = ["podstawowa", "sredniozaawansowana", "zaawansowana"];
       const date = new Date().toLocaleDateString("sv-SE");
 
       async function addTable(tableName, group, date, players) {
@@ -3203,7 +3242,7 @@ app.get("/api/results/:group", async (req, res) => {
   const { group } = req.params;
 
   // Sprawdzenie poprawności grupy
-  if (group !== "podstawowa" && group !== "zaawansowana") {
+  if (group !== "podstawowa" && group !== "zaawansowana" && group !== "średniozaawansowana") {
     return res.status(400).json({
       error: "Nieprawidłowa grupa",
     });
