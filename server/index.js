@@ -53,7 +53,7 @@ app.put("/api/players/:id/change-group", async (req, res) => {
     const oldGroup = currentPlayer.grupa;
 
     const today = new Date().toLocaleDateString("sv-SE");
-    const migrationDate = "2026-10-04";
+    const migrationDate = "2026-10-10";
 
     if (today === migrationDate) {
       if (newGroup !== "sredniozaawansowana") {
